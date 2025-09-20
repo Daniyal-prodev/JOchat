@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: jochat-preview
+    env: node
+    plan: free
+    rootDir: .
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 18

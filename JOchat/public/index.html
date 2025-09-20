@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOchat - Compare AI Models</title>
+    <link rel="icon" href="../a.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #67e8f9 0%, #a855f7 50%, #ec4899 100%); }
+        .gradient-text { background: linear-gradient(135deg, #67e8f9 0%, #a855f7 50%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-12px) scale(1.03); box-shadow: 0 30px 60px -12px rgba(168, 85, 247, 0.4); }
+        .btn-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-hover:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(168, 85, 247, 0.5); }
+        .nav-hover { transition: all 0.3s ease; }
+        .nav-hover:hover { transform: scale(1.05); background: rgba(168, 85, 247, 0.1); }
+        .text-hover { transition: all 0.3s ease; }
+        .text-hover:hover { color: #a855f7; transform: translateX(5px); }
+        .icon-hover { transition: all 0.3s ease; }
+        .icon-hover:hover { transform: rotate(15deg) scale(1.2); }
+        .message-hover { transition: all 0.3s ease; }
+        .message-hover:hover { transform: translateX(5px); box-shadow: 0 10px 25px rgba(168, 85, 247, 0.2); }
+        .tab-hover { transition: all 0.3s ease; }
+        .tab-hover:hover { transform: translateY(-2px); }
+        .input-hover { transition: all 0.3s ease; }
+        .input-hover:hover { border-color: #a855f7; box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2); }
+        .hover-lift { transition: all 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-5px); }
+        .hover-glow { transition: all 0.3s ease; }
+        .hover-glow:hover { box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
+        .hover-scale { transition: all 0.3s ease; }
+        .hover-scale:hover { transform: scale(1.05); }
+        .hover-rotate { transition: all 0.3s ease; }
+        .hover-rotate:hover { transform: rotate(5deg); }
+        .hover-bounce { transition: all 0.3s ease; }
+        .hover-bounce:hover { animation: bounce 0.6s ease; }
+        .tab-active { background: linear-gradient(135deg, #67e8f9 0%, #a855f7 50%, #ec4899 100%); }
+        .message-user { background: linear-gradient(135deg, #67e8f9 0%, #a855f7 50%, #ec4899 100%); }
+        .message-ai { background: #1f2937; border-left: 4px solid #a855f7; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #1f2937; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%); border-radius: 8px; border: 2px solid #1f2937; }
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%); }
+        
+        /* Advanced Animations */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInLeft { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(1.1); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.3); } 50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.6); } }
+        @keyframes bounce { 0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); } 40%, 43% { transform: translate3d(0, -15px, 0); } 70% { transform: translate3d(0, -7px, 0); } 90% { transform: translate3d(0, -2px, 0); } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        @keyframes wiggle { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-3deg); } 75% { transform: rotate(3deg); } }
+        @keyframes slideInScale { from { opacity: 0; transform: translateY(30px) scale(0.8); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
+        .fade-in-up { animation: fadeInUp 0.8s ease-out; }
+        .fade-in-left { animation: fadeInLeft 0.8s ease-out; }
+        .fade-in-right { animation: fadeInRight 0.8s ease-out; }
+        .slide-in { animation: slideIn 0.6s ease-out; }
+        .pulse-animation { animation: pulse 2s infinite; }
+        .float-animation { animation: float 3s ease-in-out infinite; }
+        .glow-animation { animation: glow 2s ease-in-out infinite; }
+        .bounce-animation { animation: bounce 2s infinite; }
+        .rotate-animation { animation: rotate 10s linear infinite; }
+        .shake-animation { animation: shake 0.5s ease-in-out; }
+        .heartbeat-animation { animation: heartbeat 1.5s ease-in-out infinite; }
+        .wiggle-animation { animation: wiggle 1s ease-in-out infinite; }
+        .slide-in-scale { animation: slideInScale 0.7s ease-out; }
+        .bg-animate { background: linear-gradient(-45deg, #67e8f9, #a855f7, #ec4899, #67e8f9); background-size: 400% 400%; animation: gradientShift 8s ease infinite; }
+        
+        /* Modal Styles */
+        .modal-backdrop { backdrop-filter: blur(15px); background: rgba(0, 0, 0, 0.8); }
+        .modal-content { background: linear-gradient(135deg, #1f2937 0%, #111827 100%); }
+        
+        /* Input Focus Effects */
+        .input-focus { transition: all 0.4s ease; }
+        .input-focus:focus { box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.4); transform: translateY(-2px); }
+        
+        /* Character Animations */
+        .character { font-size: 4rem; animation: float 2s ease-in-out infinite; }
+        .character:nth-child(2) { animation-delay: 0.5s; }
+        .character:nth-child(3) { animation-delay: 1s; }
+        .character:nth-child(4) { animation-delay: 1.5s; }
+        
+        /* Error/Success Messages */
+        .error-message { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; }
+        .success-message { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #86efac; }
+        
+        /* Logo Animation */
+        .logo-face { animation: float 3s ease-in-out infinite; }
+        .logo-eyes { animation: pulse 4s ease-in-out infinite; }
+        
+        /* Light Theme */
+        .light-theme { background: #f9fafb; color: #111827; }
+        .light-theme .modal-content { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); }
+        .light-theme .message-ai { background: #f3f4f6; color: #111827; }
+        .light-theme .bg-gray-800 { background: #f3f4f6; }
+        .light-theme .bg-gray-700 { background: #e5e7eb; }
+        .light-theme .text-white { color: #111827; }
+        .light-theme .text-gray-300 { color: #374151; }
+        .light-theme .text-gray-400 { color: #6b7280; }
+        .light-theme .text-gray-100 { color: #111827; }
+        .light-theme .border-gray-700 { border-color: #d1d5db; }
+        .light-theme .border-gray-600 { border-color: #d1d5db; }
+        .light-theme .bg-gray-800\/50 { background: rgba(243, 244, 246, 0.5); }
+        .light-theme .bg-gray-800\/95 { background: rgba(243, 244, 246, 0.95); }
+        .light-theme .bg-gray-800\/60 { background: rgba(243, 244, 246, 0.6); }
+        .light-theme .font-medium { color: #111827; }
+        .light-theme span { color: #111827; }
+        .light-theme h3 { color: #111827; }
+        .light-theme p { color: #374151; }
+        
+        /* Dropdown */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content { display: none; position: absolute; right: 0; background: #1f2937; min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; border-radius: 12px; border: 1px solid #374151; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a { color: #d1d5db; padding: 12px 16px; text-decoration: none; display: block; transition: all 0.3s ease; }
+        .dropdown-content a:hover { background: #374151; }
+        .light-theme .dropdown-content { background: #f3f4f6; border: 1px solid #d1d5db; }
+        .light-theme .dropdown-content a { color: #111827; }
+        .light-theme .dropdown-content a:hover { background: #e5e7eb; }
+    </style>
+    <style>
+        html { -webkit-text-size-adjust: 100%; }
+        body { overflow-x: hidden; }
+        img, video, canvas, svg { max-width: 100%; height: auto; }
+        pre, code { white-space: pre-wrap; word-wrap: break-word; overflow-wrap: anywhere; }
+        iframe { max-width: 100%; }
+        .safe-px { padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right)); }
+        .tap-target { min-height: 44px; min-width: 44px; }
+    </style>
+    <style>
+        @media (max-width: 640px) {
+            .nav-hover { padding: 0.5rem 1rem !important; font-size: 0.875rem !important; }
+            .btn-hover { padding: 0.5rem 1rem !important; font-size: 0.875rem !important; }
+            nav .flex.items-center { gap: 0.5rem !important; flex-wrap: wrap; }
+        }
+    </style>
+
+</head>
+<body class="bg-gray-900 text-white min-h-screen overflow-x-hidden">
+    <!-- Profile Modal -->
+    <div id="profileModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+        <div class="modal-content rounded-3xl p-6 sm:p-10 max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-700 shadow-2xl glow-animation">
+            <div class="text-center mb-8">
+                <img src="../a.png" alt="JOchat" class="w-24 h-24 rounded-full mx-auto mb-6 float-animation">
+                <h2 class="text-base font-bold gradient-text">Profile Settings</h2>
+            </div>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Display Name</label>
+                    <input type="text" id="profileName" class="w-full px-6 py-4 bg-gray-800 border border-gray-600 rounded-xl input-focus text-base" maxlength="50">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <input type="email" id="profileEmail" disabled class="w-full px-6 py-4 bg-gray-700 border border-gray-600 rounded-xl text-base opacity-50">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Avatar</label>
+                    <div class="flex space-x-3">
+                        <button onclick="setAvatar('😊')" class="w-12 h-12 bg-gray-700 rounded-xl text-2xl hover:bg-gray-600 transition-colors">😊</button>
+                        <button onclick="setAvatar('🥰')" class="w-12 h-12 bg-gray-700 rounded-xl text-2xl hover:bg-gray-600 transition-colors">🥰</button>
+                        <button onclick="setAvatar('🤗')" class="w-12 h-12 bg-gray-700 rounded-xl text-2xl hover:bg-gray-600 transition-colors">🤗</button>
+                        <button onclick="setAvatar('🚀')" class="w-12 h-12 bg-gray-700 rounded-xl text-2xl hover:bg-gray-600 transition-colors">🚀</button>
+                        <button onclick="setAvatar('⭐')" class="w-12 h-12 bg-gray-700 rounded-xl text-2xl hover:bg-gray-600 transition-colors">⭐</button>
+                    </div>
+                </div>
+                <button onclick="saveProfile()" class="w-full gradient-bg py-4 rounded-xl font-medium btn-hover text-base">💾 Save Changes</button>
+            </div>
+            
+            <button onclick="closeProfile()" class="absolute top-6 right-6 text-gray-300 hover:text-white p-2 rounded-full hover:bg-gray-700 transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+        <div class="modal-content rounded-3xl p-6 sm:p-10 max-w-lg w-full max-h-[90vh] overflow-y-auto border border-gray-700 shadow-2xl glow-animation">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6 float-animation">
+                    <span class="text-2xl rotate-animation">⚙️</span>
+                </div>
+                <h2 class="text-base font-bold gradient-text">Settings</h2>
+            </div>
+            
+            <div class="space-y-6 max-h-96 overflow-y-auto">
+                <div id="loginSection" class="hidden">
+                    <button onclick="showAuth()" class="w-full gradient-bg py-4 rounded-xl font-medium btn-hover text-base">
+                        🚀 Sign In / Sign Up
+                    </button>
+                    <div class="border-t border-gray-600 my-6"></div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-3">Theme</label>
+                    <div class="flex space-x-3">
+                        <button onclick="setTheme('dark')" id="theme-dark" class="flex-1 bg-gray-800 border-2 border-purple-500 px-4 py-3 rounded-xl hover:bg-gray-700 transition-all">
+                            <span class="text-base">🌙</span> Dark
+                        </button>
+                        <button onclick="setTheme('light')" id="theme-light" class="flex-1 bg-gray-800 border-2 border-gray-600 px-4 py-3 rounded-xl hover:bg-gray-700 transition-all">
+                            <span class="text-base">☀️</span> Light
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-3">Animations</label>
+                    <div class="flex items-center justify-between bg-gray-800 px-4 py-3 rounded-xl">
+                        <span>Enable Animations</span>
+                        <button onclick="toggleAnimations()" id="animations-toggle" class="w-12 h-6 bg-purple-500 rounded-full relative transition-all">
+                            <div class="w-5 h-5 bg-white rounded-full absolute top-0.5 right-0.5 transition-all"></div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-3">Sound Effects</label>
+                    <div class="flex items-center justify-between bg-gray-800 px-4 py-3 rounded-xl">
+                        <span>Enable Sounds</span>
+                        <button onclick="toggleSounds()" id="sounds-toggle" class="w-12 h-6 bg-gray-600 rounded-full relative transition-all">
+                            <div class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 transition-all"></div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-3">Auto-scroll Messages</label>
+                    <div class="flex items-center justify-between bg-gray-800 px-4 py-3 rounded-xl">
+                        <span>Auto-scroll to new messages</span>
+                        <button onclick="toggleAutoScroll()" id="autoscroll-toggle" class="w-12 h-6 bg-purple-500 rounded-full relative transition-all">
+                            <div class="w-5 h-5 bg-white rounded-full absolute top-0.5 right-0.5 transition-all"></div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-3">Message Font Size</label>
+                    <select id="fontSize" onchange="setFontSize()" class="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl input-focus">
+                        <option value="text-sm">Small</option>
+                        <option value="text-base" selected>Medium</option>
+                        <option value="text-base">Large</option>
+                        <option value="text-base">Extra Large</option>
+                    </select>
+                </div>
+                
+                <button onclick="resetSettings()" class="w-full bg-red-600 hover:bg-red-700 py-3 rounded-xl font-medium transition-all hover-lift">
+                    🔄 Reset to Defaults
+                </button>
+            </div>
+            
+            <button onclick="closeSettings()" class="absolute top-6 right-6 text-gray-300 hover:text-white p-2 rounded-full hover:bg-gray-700 transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Chat History Modal -->
+    <div id="chatHistoryModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+        <div class="modal-content rounded-3xl p-10 max-w-4xl w-full border border-gray-700 shadow-2xl glow-animation">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 float-animation">
+                    <span class="text-2xl">💬</span>
+                </div>
+                <h2 class="text-base font-bold gradient-text">Chat History</h2>
+            </div>
+            
+            <div id="chatHistoryList" class="space-y-4 max-h-96 overflow-y-auto">
+                <!-- Chat history items will be populated here -->
+            </div>
+            
+            <button onclick="closeChatHistory()" class="absolute top-6 right-6 text-gray-300 hover:text-white p-2 rounded-full hover:bg-gray-700 transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+        <div class="modal-content rounded-3xl p-10 max-w-md w-full border border-gray-700 shadow-2xl glow-animation">
+            <div class="text-center mb-8">
+                <img src="../a.png" alt="JOchat" class="w-20 h-20 rounded-full mx-auto mb-6 logo-face">
+                <h2 id="authTitle" class="text-base font-bold gradient-text">Welcome to JOchat</h2>
+            </div>
+            
+            <div id="authMessage" class="hidden mb-6 p-4 rounded-xl text-center text-sm"></div>
+            
+            <div id="loginForm">
+                <div class="space-y-6">
+                    <input type="email" id="loginEmail" placeholder="✉️ Email" class="w-full px-6 py-4 bg-gray-800 border border-gray-600 rounded-xl input-focus text-lg" required>
+                    <input type="password" id="loginPassword" placeholder="🔒 Password" class="w-full px-6 py-4 bg-gray-800 border border-gray-600 rounded-xl input-focus text-lg" required>
+                    <button onclick="login()" class="w-full gradient-bg py-4 rounded-xl font-medium btn-hover text-lg">🚀 Sign In</button>
+                </div>
+                <p class="text-center mt-6 text-gray-300">Don't have an account? <button onclick="showSignup()" class="text-cyan-400 hover:underline font-semibold">Sign up</button></p>
+            </div>
+            
+            <div id="signupForm" class="hidden">
+                <div class="space-y-6">
+                    <input type="text" id="signupName" placeholder="😊 Full Name" class="w-full px-6 py-4 bg-gray-800 border border-gray-600 rounded-xl input-focus text-lg" required maxlength="50">
+                    <input type="email" id="signupEmail" placeholder="✉️ Email" class="w-full px-6 py-4 bg-gray-800 border border-gray-600 rounded-xl input-focus text-lg" required>
+                    <input type="password" id="signupPassword" placeholder="🔒 Password (min 6 characters)" class="w-full px-6 py-4 bg-gray-800 border border-gray-600 rounded-xl input-focus text-lg" required minlength="6">
+                    <button onclick="signup()" class="w-full gradient-bg py-4 rounded-xl font-medium btn-hover text-lg">✨ Create Account</button>
+                </div>
+                <p class="text-center mt-6 text-gray-300">Already have an account? <button onclick="showLogin()" class="text-cyan-400 hover:underline font-semibold">Sign in</button></p>
+            </div>
+            
+            <button onclick="closeAuth()" class="absolute top-6 right-6 text-gray-300 hover:text-white p-2 rounded-full hover:bg-gray-700 transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Homepage -->
+    <div id="homepage">
+        <nav class="bg-gray-800/95 backdrop-blur-xl border-b border-gray-700 px-6 py-5 sticky top-0 z-40">
+            <div class="flex items-center justify-between max-w-7xl mx-auto">
+                <div class="flex items-center space-x-4">
+                    <img src="../a.png" alt="JOchat" class="w-12 h-12 rounded-2xl shadow-lg glow-animation hover-scale">
+                    <span class="text-lg font-bold gradient-text hover-lift">JOchat</span>
+                </div>
+                <div class="flex items-center gap-3 sm:gap-6 flex-wrap">
+                    <button onclick="showAbout()" class="text-gray-300 hover:text-white transition-all duration-300 hover:scale-110 bounce-animation nav-hover">
+                        <div class="flex items-center space-x-2 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 px-4 py-2 rounded-xl border border-cyan-500/30 hover:border-cyan-400 transition-all">
+                            <span class="text-2xl">📖</span>
+                            <span class="font-medium">About</span>
+                        </div>
+                    </button>
+
+                    <div id="userSection" class="hidden flex items-center space-x-4">
+                        <div class="dropdown">
+                            <button class="flex items-center space-x-2 bg-gray-700 px-4 py-2 rounded-xl hover:bg-gray-600 transition-colors hover-lift">
+                                <span id="userAvatar" class="text-lg">😊</span>
+                                <span id="userWelcome" class="text-gray-300 font-medium"></span>
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div class="dropdown-content">
+                                <a href="#" onclick="showProfile()">👤 Profile</a>
+                                <a href="#" onclick="showSettings()">⚙️ Settings</a>
+                                <a href="#" onclick="showChatHistory()">💬 Chat History</a>
+                                <a href="#" onclick="logout()">🚪 Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="guestSection" class="flex items-center space-x-4">
+                        <button onclick="showAuth()" class="gradient-bg px-8 py-3 rounded-xl font-medium btn-hover heartbeat-animation">
+                            🚀 Sign Up
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <div class="relative min-h-screen flex items-center justify-center">
+            <div class="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-purple-900/20 to-pink-900/20"></div>
+            <div class="relative z-10 max-w-7xl mx-auto px-6 py-20 text-center fade-in-up">
+                <div class="flex justify-center space-x-8 mb-12">
+                    <span class="character">😊</span>
+                    <span class="character">💬</span>
+                    <span class="character">⚡</span>
+                    <span class="character">🚀</span>
+                </div>
+                
+                <h1 class="text-xl md:text-lg font-bold mb-8 leading-tight">
+                    <span class="bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+                        The Ultimate
+                    </span>
+                    <br>
+                    <span class="text-white">AI Comparison Platform</span>
+                </h1>
+                
+                <p class="text-lg text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+                    🎯 Ask one question and get instant answers from <strong>ChatGPT, Gemini, DeepSeek, Grok, Qwen & Kimi</strong> simultaneously. 
+                    Compare their responses side-by-side to find the perfect answer for your needs.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-6 justify-center mb-16">
+                    <button onclick="startChat()" class="gradient-bg px-8 py-3 text-lg font-bold rounded-2xl btn-hover shadow-2xl glow-animation pulse-animation">
+                        🚀 Start Comparing Now
+                    </button>
+                    <button onclick="showAbout()" class="border-2 border-gray-600 px-8 py-3 text-lg font-medium rounded-2xl hover:bg-gray-800 hover:border-gray-500 transition-all duration-300 hover-lift">
+                        📖 Learn More
+                    </button>
+                </div>
+
+                <!-- AI Models Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+                    <div class="bg-gray-800/60 backdrop-blur-lg border border-gray-700 rounded-3xl p-10 card-hover fade-in-up">
+                        <div class="w-20 h-20 bg-green-500/20 rounded-3xl flex items-center justify-center mb-8 mx-auto hover-bounce">
+                            <img src="https://openai.com/favicon.ico" alt="ChatGPT" class="w-10 h-10 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                        </div>
+                        <h3 class="text-lg font-bold mb-3 text-green-400 text-hover">ChatGPT</h3>
+                        <p class="text-sm text-gray-300">General purpose AI with excellent reasoning</p>
+                        <div class="mt-4 flex items-center justify-center">
+                            <div class="w-3 h-3 bg-green-500 rounded-full pulse-animation mr-2"></div>
+                            <span class="text-xs text-green-400 font-medium">ONLINE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800/60 backdrop-blur-lg border border-gray-700 rounded-3xl p-10 card-hover fade-in-up" style="animation-delay: 0.2s">
+                        <div class="w-20 h-20 bg-blue-500/20 rounded-3xl flex items-center justify-center mb-8 mx-auto hover-bounce">
+                            <img src="https://gemini.google.com/favicon.ico" alt="Gemini" class="w-10 h-10 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                        </div>
+                        <h3 class="text-lg font-bold mb-3 text-blue-400 text-hover">Gemini</h3>
+                        <p class="text-sm text-gray-300">Google's advanced AI with multimodal capabilities</p>
+                        <div class="mt-4 flex items-center justify-center">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full pulse-animation mr-2"></div>
+                            <span class="text-xs text-blue-400 font-medium">ONLINE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800/60 backdrop-blur-lg border border-gray-700 rounded-3xl p-10 card-hover fade-in-up" style="animation-delay: 0.4s">
+                        <div class="w-20 h-20 bg-teal-500/20 rounded-3xl flex items-center justify-center mb-8 mx-auto hover-bounce">
+                            <img src="https://www.deepseek.com/favicon.ico" alt="DeepSeek" class="w-10 h-10 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                        </div>
+                        <h3 class="text-lg font-bold mb-3 text-teal-400 text-hover">DeepSeek</h3>
+                        <p class="text-sm text-gray-300">Specialized in deep reasoning and analysis</p>
+                        <div class="mt-4 flex items-center justify-center">
+                            <div class="w-3 h-3 bg-teal-500 rounded-full pulse-animation mr-2"></div>
+                            <span class="text-xs text-teal-400 font-medium">ONLINE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800/60 backdrop-blur-lg border border-gray-700 rounded-3xl p-10 card-hover fade-in-up" style="animation-delay: 0.6s">
+                        <div class="w-20 h-20 bg-pink-500/20 rounded-3xl flex items-center justify-center mb-8 mx-auto hover-bounce">
+                            <img src="https://x.ai/favicon.ico" alt="Grok" class="w-10 h-10 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                        </div>
+                        <h3 class="text-lg font-bold mb-3 text-pink-400 text-hover">Grok</h3>
+                        <p class="text-sm text-gray-300">Creative AI with unconventional thinking</p>
+                        <div class="mt-4 flex items-center justify-center">
+                            <div class="w-3 h-3 bg-pink-500 rounded-full pulse-animation mr-2"></div>
+                            <span class="text-xs text-pink-400 font-medium">ONLINE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800/60 backdrop-blur-lg border border-gray-700 rounded-3xl p-10 card-hover fade-in-up" style="animation-delay: 0.8s">
+                        <div class="w-20 h-20 bg-purple-500/20 rounded-3xl flex items-center justify-center mb-8 mx-auto hover-bounce">
+                            <img src="https://qwenlm.ai/favicon.ico" alt="Qwen" class="w-10 h-10 rounded object-contain bg-white/10" onerror="this.onerror=null; this.src='https://qwenlm.ai/favicon-32x32.png';"/>
+                        </div>
+                        <h3 class="text-lg font-bold mb-3 text-purple-400 text-hover">Qwen</h3>
+                        <p class="text-sm text-gray-300">Advanced reasoning with multilingual capabilities</p>
+                        <div class="mt-4 flex items-center justify-center">
+                            <div class="w-3 h-3 bg-purple-500 rounded-full pulse-animation mr-2"></div>
+                            <span class="text-xs text-purple-400 font-medium">ONLINE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800/60 backdrop-blur-lg border border-gray-700 rounded-3xl p-10 card-hover fade-in-up" style="animation-delay: 1.0s">
+                        <div class="w-20 h-20 bg-yellow-500/20 rounded-3xl flex items-center justify-center mb-8 mx-auto hover-bounce">
+                            <img src="https://kimi.moonshot.cn/favicon.ico" alt="Kimi" class="w-10 h-10 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                        </div>
+                        <h3 class="text-lg font-bold mb-3 text-yellow-400 text-hover">Kimi</h3>
+                        <p class="text-sm text-gray-300">Long context AI with excellent memory</p>
+                        <div class="mt-4 flex items-center justify-center">
+                            <div class="w-3 h-3 bg-yellow-500 rounded-full pulse-animation mr-2"></div>
+                            <span class="text-xs text-yellow-400 font-medium">ONLINE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div id="featuresSection" class="py-32 bg-gradient-to-b from-gray-900 to-gray-800">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-20">
+                    <h2 class="text-lg font-bold mb-6 gradient-text">Why Choose JOchat? 🤔</h2>
+                    <p class="text-lg text-gray-300 max-w-3xl mx-auto">Experience the future of AI interaction with our revolutionary comparison platform</p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-12">
+                    <div class="text-center fade-in-up">
+                        <div class="text-6xl mb-6">⚡</div>
+                        <h3 class="text-lg font-bold mb-3">Lightning Fast</h3>
+                        <p class="text-sm text-gray-300">Get responses from all AI models simultaneously in seconds, not minutes</p>
+                    </div>
+                    <div class="text-center fade-in-up">
+                        <div class="text-6xl mb-6">🎯</div>
+                        <h3 class="text-lg font-bold mb-3">Perfect Accuracy</h3>
+                        <p class="text-sm text-gray-300">Compare different perspectives to find the most accurate and comprehensive answer</p>
+                    </div>
+                    <div class="text-center fade-in-up">
+                        <div class="text-6xl mb-6">💎</div>
+                        <h3 class="text-lg font-bold mb-3">Premium Experience</h3>
+                        <p class="text-sm text-gray-300">Access to the world's best AI models in one beautiful, intuitive interface</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Page -->
+    <div id="aboutpage" class="hidden min-h-screen">
+        <nav class="bg-gray-800/95 backdrop-blur-xl border-b border-gray-700 px-6 py-5">
+            <div class="flex items-center justify-between max-w-7xl mx-auto">
+                <div class="flex items-center space-x-4">
+                    <button onclick="goHome()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition-all">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </button>
+                    <img src="../a.png" alt="JOchat" class="w-12 h-12 rounded-2xl">
+                    <span class="text-lg font-bold gradient-text">JOchat</span>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="max-w-4xl mx-auto px-6 py-20">
+            <div class="text-center mb-16 fade-in-up">
+                <img src="../a.png" alt="JOchat" class="w-32 h-32 rounded-full mx-auto mb-8 logo-face glow-animation">
+                <h1 class="text-2xl font-bold mb-6 gradient-text">About JOchat 📖</h1>
+                <p class="text-lg text-gray-400">The revolutionary AI comparison platform that's changing how we interact with artificial intelligence</p>
+            </div>
+            
+            <div class="space-y-16">
+                <div class="bg-gray-800/50 backdrop-blur-lg rounded-3xl p-12 fade-in-up card-hover">
+                    <h2 class="text-xl font-bold mb-6 text-cyan-400">🚀 Our Mission</h2>
+                    <p class="text-lg text-gray-300 leading-relaxed">
+                        JOchat was created to solve a simple problem: why settle for one AI's perspective when you can have them all? 
+                        We believe that the best answers come from comparing multiple viewpoints, and our platform makes that effortless.
+                    </p>
+                </div>
+                
+                <div class="bg-gray-800/50 backdrop-blur-lg rounded-3xl p-12 fade-in-up card-hover">
+                    <h2 class="text-xl font-bold mb-6 text-purple-400">⚡ How It Works</h2>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="bg-gray-700/30 p-6 rounded-2xl">
+                            <h3 class="text-xl font-semibold mb-4 text-green-400">1. Ask Your Question</h3>
+                            <p class="text-gray-400">Type any question or request into our intelligent interface</p>
+                        </div>
+                        <div class="bg-gray-700/30 p-6 rounded-2xl">
+                            <h3 class="text-xl font-semibold mb-4 text-blue-400">2. AI Models Respond</h3>
+                            <p class="text-gray-400">ChatGPT, Gemini, DeepSeek, and Grok all process your query simultaneously</p>
+                        </div>
+                        <div class="bg-gray-700/30 p-6 rounded-2xl">
+                            <h3 class="text-xl font-semibold mb-4 text-teal-400">3. Compare Results</h3>
+                            <p class="text-gray-400">View all responses side-by-side or switch between individual models</p>
+                        </div>
+                        <div class="bg-gray-700/30 p-6 rounded-2xl">
+                            <h3 class="text-xl font-semibold mb-4 text-pink-400">4. Choose the Best</h3>
+                            <p class="text-gray-400">Select the most accurate, creative, or comprehensive answer for your needs</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-800/50 backdrop-blur-lg rounded-3xl p-12 fade-in-up card-hover">
+                    <h2 class="text-xl font-bold mb-6 text-pink-400">🌟 Why We're Different</h2>
+                    <ul class="space-y-4 text-lg text-gray-300">
+                        <li class="flex items-center"><span class="text-green-400 mr-3 text-2xl">✓</span> First platform to compare multiple AI models simultaneously</li>
+                        <li class="flex items-center"><span class="text-green-400 mr-3 text-2xl">✓</span> Beautiful, intuitive interface designed for productivity</li>
+                        <li class="flex items-center"><span class="text-green-400 mr-3 text-2xl">✓</span> Secure user accounts with chat history saving</li>
+                        <li class="flex items-center"><span class="text-green-400 mr-3 text-2xl">✓</span> Lightning-fast responses with advanced caching</li>
+                        <li class="flex items-center"><span class="text-green-400 mr-3 text-2xl">✓</span> Constantly updated with the latest AI models</li>
+                    </ul>
+                </div>
+                
+                <div class="text-center">
+                    <button onclick="startChat()" class="gradient-bg px-12 py-5 text-2xl font-bold rounded-2xl btn-hover shadow-2xl glow-animation">
+                        🚀 Try JOchat Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Interface -->
+    <div id="chatpage" class="hidden h-screen flex flex-col">
+        <!-- Header -->
+        <div class="bg-gray-800/95 backdrop-blur-xl border-b border-gray-700 px-6 py-5">
+            <div class="flex items-center justify-between max-w-7xl mx-auto">
+                <div class="flex items-center space-x-4">
+                    <button onclick="goHome()" class="text-gray-400 hover:text-white p-3 rounded-xl hover:bg-gray-700 transition-all">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </button>
+                    <img src="../a.png" alt="JOchat" class="w-12 h-12 rounded-2xl glow-animation">
+                    <span class="text-2xl font-bold gradient-text">JOchat</span>
+                </div>
+                <div class="flex items-center gap-3 sm:gap-6 flex-wrap">
+                    <button onclick="newChat()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl transition-all hover-lift">
+                        ➕ New Chat
+                    </button>
+                    <button onclick="showChatHistory()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl transition-all hover-lift">
+                        📚 History
+                    </button>
+                    <span class="text-sm text-gray-400 bg-gray-700 px-4 py-2 rounded-full">JOchat AI Models 🚀</span>
+                    <div class="flex items-center space-x-2">
+                        <span id="chatUserAvatar" class="text-xl">😊</span>
+                        <span id="chatUserName" class="text-gray-300 font-medium"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Tabs -->
+        <div class="bg-gray-800/95 backdrop-blur-xl border-b border-gray-700 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex space-x-3 overflow-x-auto py-3">
+                    <button onclick="switchTab('all')" id="tab-all" class="tab-active px-8 py-4 text-sm font-medium rounded-2xl whitespace-nowrap transition-all tab-hover">
+                        🌟 All Models
+                    </button>
+                    <button onclick="switchTab('chatgpt')" id="tab-chatgpt" class="px-8 py-4 text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-700 rounded-2xl whitespace-nowrap transition-all tab-hover">
+                        🧠 ChatGPT
+                    </button>
+                    <button onclick="switchTab('gemini')" id="tab-gemini" class="px-8 py-4 text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-700 rounded-2xl whitespace-nowrap transition-all tab-hover">
+                        ⭐ Gemini
+                    </button>
+                    <button onclick="switchTab('deepseek')" id="tab-deepseek" class="px-8 py-4 text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-700 rounded-2xl whitespace-nowrap transition-all tab-hover">
+                        🔬 DeepSeek
+                    </button>
+                    <button onclick="switchTab('grok')" id="tab-grok" class="px-8 py-4 text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-700 rounded-2xl whitespace-nowrap transition-all tab-hover">
+                        ⚡ Grok
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="flex-1 overflow-hidden">
+            <div id="messages" class="h-full overflow-y-auto px-6 py-8 max-w-7xl mx-auto space-y-8">
+                <div class="message-ai rounded-3xl p-8 w-full break-words shadow-xl">
+                    <div class="text-xs text-purple-400 mb-4 font-bold uppercase tracking-wide">😊 SYSTEM</div>
+                    <p class="text-gray-100 leading-relaxed text-lg">Hello! 👋 Ask me anything and I'll show you responses from multiple AI models. You can view all responses together or switch between individual models using the tabs above. Let's explore the power of AI together! ✨</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="bg-gray-800/95 backdrop-blur-xl border-t border-gray-700 px-6 py-8">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex space-x-6">
+                    <div class="flex-1">
+                        <input 
+                            id="messageInput" 
+                            type="text" 
+                            placeholder="🚀 Ask anything... (e.g., 'Explain quantum computing' or 'Write a marketing email')" 
+                            class="w-full px-8 py-5 bg-gray-700/60 backdrop-blur-sm border border-gray-600 rounded-3xl text-white placeholder-gray-400 input-focus input-hover text-lg"
+                            onkeypress="if(event.key==='Enter') sendMessage()"
+                            maxlength="1000"
+                        />
+                    </div>
+                    <button onclick="sendMessage()" class="gradient-bg px-10 py-5 rounded-3xl font-medium btn-hover shadow-xl glow-animation pulse-animation">
+                        <svg class="w-8 h-8 icon-hover" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'all';
+        let allMessages = [];
+        let currentUser = null;
+
+        // Utility Functions
+        function showMessage(message, type = 'error') {
+            const messageDiv = document.getElementById('authMessage');
+            messageDiv.className = `mb-6 p-4 rounded-xl text-center text-sm ${type === 'error' ? 'error-message' : 'success-message'}`;
+            messageDiv.textContent = message;
+            messageDiv.classList.remove('hidden');
+            setTimeout(() => messageDiv.classList.add('hidden'), 5000);
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Profile Functions
+        function showProfile() {
+            if (currentUser) {
+                document.getElementById('profileName').value = currentUser.name;
+                document.getElementById('profileEmail').value = currentUser.email;
+                document.getElementById('profileModal').classList.remove('hidden');
+            }
+        }
+
+        function closeProfile() {
+            document.getElementById('profileModal').classList.add('hidden');
+        }
+
+        function setAvatar(emoji) {
+            if (currentUser) {
+                currentUser.avatar = emoji;
+                localStorage.setItem('jochat_user', JSON.stringify(currentUser));
+                updateUI();
+            }
+        }
+
+        function saveProfile() {
+            if (currentUser) {
+                const newName = document.getElementById('profileName').value.trim();
+                if (!newName) {
+                    showMessage('Name cannot be empty', 'error');
+                    return;
+                }
+                currentUser.name = newName;
+                localStorage.setItem('jochat_user', JSON.stringify(currentUser));
+                updateUI();
+                closeProfile();
+                showMessage('Profile updated successfully!', 'success');
+            }
+        }
+
+        // Auth Functions
+        function showAuth() {
+            document.getElementById('authModal').classList.remove('hidden');
+            document.getElementById('authMessage').classList.add('hidden');
+        }
+
+        function closeAuth() {
+            document.getElementById('authModal').classList.add('hidden');
+            clearAuthForms();
+        }
+
+        function clearAuthForms() {
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('signupName').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupPassword').value = '';
+            document.getElementById('authMessage').classList.add('hidden');
+        }
+
+        function showLogin() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('signupForm').classList.add('hidden');
+            document.getElementById('authTitle').textContent = 'Welcome Back 👋';
+            document.getElementById('authMessage').classList.add('hidden');
+        }
+
+        function showSignup() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('signupForm').classList.remove('hidden');
+            document.getElementById('authTitle').textContent = 'Join JOchat ✨';
+            document.getElementById('authMessage').classList.add('hidden');
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showMessage('Please fill in all fields', 'error');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                showMessage('Please enter a valid email address', 'error');
+                return;
+            }
+
+            const savedUser = localStorage.getItem(`jochat_user_${email}`);
+            if (!savedUser) {
+                showMessage('No account found with this email. Please sign up first.', 'error');
+                return;
+            }
+
+            const userData = JSON.parse(savedUser);
+            if (userData.password !== password) {
+                showMessage('Incorrect password. Please try again.', 'error');
+                return;
+            }
+
+            currentUser = { email: userData.email, name: userData.name, avatar: userData.avatar || '😊' };
+            localStorage.setItem('jochat_user', JSON.stringify(currentUser));
+            loadUserData();
+            closeAuth();
+            updateUI();
+            showMessage('Login successful! Welcome back.', 'success');
+        }
+
+        function signup() {
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            
+            if (!name || !email || !password) {
+                showMessage('Please fill in all fields', 'error');
+                return;
+            }
+
+            if (name.length < 2) {
+                showMessage('Name must be at least 2 characters long', 'error');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                showMessage('Please enter a valid email address', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters long', 'error');
+                return;
+            }
+
+            const existingUser = localStorage.getItem(`jochat_user_${email}`);
+            if (existingUser) {
+                showMessage('An account with this email already exists. Please login instead.', 'error');
+                return;
+            }
+
+            const userData = { email, name, password, avatar: '😊' };
+            localStorage.setItem(`jochat_user_${email}`, JSON.stringify(userData));
+            localStorage.setItem(`jochat_chats_${email}`, JSON.stringify([]));
+            
+            currentUser = { email, name, avatar: '😊' };
+            localStorage.setItem('jochat_user', JSON.stringify(currentUser));
+            closeAuth();
+            updateUI();
+            showMessage('Account created successfully! Welcome to JOchat.', 'success');
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('jochat_user');
+            allMessages = [];
+            updateUI();
+            goHome();
+        }
+
+        function updateUI() {
+            if (currentUser) {
+                document.getElementById('userSection').classList.remove('hidden');
+                document.getElementById('guestSection').classList.add('hidden');
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('userWelcome').textContent = currentUser.name;
+                document.getElementById('userAvatar').textContent = currentUser.avatar || '😊';
+                document.getElementById('chatUserName').textContent = currentUser.name;
+                document.getElementById('chatUserAvatar').textContent = currentUser.avatar || '😊';
+            } else {
+                document.getElementById('userSection').classList.add('hidden');
+                document.getElementById('guestSection').classList.remove('hidden');
+                document.getElementById('loginSection').classList.remove('hidden');
+            }
+        }
+
+        function loadUserData() {
+            if (currentUser) {
+                const savedChats = localStorage.getItem(`jochat_chats_${currentUser.email}`);
+                if (savedChats) {
+                    allMessages = JSON.parse(savedChats);
+                }
+            }
+        }
+
+        function saveUserData() {
+            if (currentUser) {
+                localStorage.setItem(`jochat_chats_${currentUser.email}`, JSON.stringify(allMessages));
+            }
+        }
+
+        // Navigation Functions
+        function startChat() {
+            if (!currentUser) {
+                showAuth();
+                return;
+            }
+            window.location.href = './chat.html';
+        }
+        
+        function goHome() {
+            document.getElementById('homepage').classList.remove('hidden');
+            document.getElementById('aboutpage').classList.add('hidden');
+            document.getElementById('chatpage').classList.add('hidden');
+        }
+
+        function showAbout() {
+            document.getElementById('homepage').classList.add('hidden');
+            document.getElementById('aboutpage').classList.remove('hidden');
+            document.getElementById('chatpage').classList.add('hidden');
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            document.querySelectorAll('[id^="tab-"]').forEach(t => {
+                t.className = 'px-8 py-4 text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-700 rounded-2xl whitespace-nowrap transition-all';
+            });
+            document.getElementById(`tab-${tab}`).className = 'tab-active px-8 py-4 text-sm font-medium rounded-2xl whitespace-nowrap transition-all';
+            
+            displayMessages();
+        }
+
+        function displayMessages() {
+            const messagesDiv = document.getElementById('messages');
+            let filteredMessages = allMessages;
+            
+            if (currentTab !== 'all') {
+                filteredMessages = allMessages.filter(msg => 
+                    msg.role === 'user' || msg.model === currentTab
+                );
+            }
+            
+            messagesDiv.innerHTML = `
+                <div class="message-ai rounded-3xl p-8 w-full break-words shadow-xl fade-in-up">
+                    <div class="text-xs text-purple-400 mb-4 font-bold uppercase tracking-wide">😊 SYSTEM</div>
+                    <p class="text-gray-100 leading-relaxed text-base">Hello! 👋 Ask me anything and I'll show you responses from multiple AI models. You can view all responses together or switch between individual models using the tabs above. Let's explore the power of AI together! ✨</p>
+                </div>
+            `;
+            
+            if (currentTab === 'all') {
+                // Group messages by user input
+                const groupedMessages = [];
+                let currentGroup = null;
+                
+                filteredMessages.forEach(msg => {
+                    if (msg.role === 'user') {
+                        if (currentGroup) groupedMessages.push(currentGroup);
+                        currentGroup = { user: msg, responses: [] };
+                    } else if (currentGroup) {
+                        currentGroup.responses.push(msg);
+                    }
+                });
+                if (currentGroup) groupedMessages.push(currentGroup);
+                
+                groupedMessages.forEach((group, groupIndex) => {
+                    // User message
+                    messagesDiv.innerHTML += `
+                        <div class="flex justify-end fade-in-up mb-8" style="animation-delay: ${groupIndex * 0.1}s">
+                            <div class="message-user rounded-3xl p-8 max-w-2xl shadow-xl">
+                                <p class="text-white leading-relaxed text-base">💬 ${group.user.content}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // AI responses in bordered sections
+                    if (group.responses.length > 0) {
+                        messagesDiv.innerHTML += `<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">`;
+                        
+                        group.responses.forEach((msg, responseIndex) => {
+                            const colors = {
+                                'chatgpt': 'green',
+                                'gemini': 'blue', 
+                                'deepseek': 'teal',
+                                'grok': 'pink'
+                            };
+                            const icons = {
+                                'chatgpt': '🧠',
+                                'gemini': '⭐',
+                                'deepseek': '🔬',
+                                'grok': '⚡'
+                            };
+                            
+                            messagesDiv.innerHTML += `
+                                <div class="border-2 border-${colors[msg.model]}-500/30 rounded-3xl p-6 bg-gray-800/50 backdrop-blur-sm fade-in-up" style="animation-delay: ${(groupIndex * 0.1) + (responseIndex * 0.05)}s">
+                                    <div class="text-xs text-${colors[msg.model]}-400 mb-4 font-bold uppercase tracking-wide border-b border-${colors[msg.model]}-500/20 pb-2">
+                                        ${icons[msg.model]} ${msg.model.toUpperCase()}
+                                    </div>
+                                    <p class="text-gray-100 leading-relaxed text-base">${msg.content}</p>
+                                </div>
+                            `;
+                        });
+                        
+                        messagesDiv.innerHTML += `</div>`;
+                    }
+                });
+            } else {
+                // Single model view
+                filteredMessages.forEach((msg, index) => {
+                    if (msg.role === 'user') {
+                        messagesDiv.innerHTML += `
+                            <div class="flex justify-end fade-in-up" style="animation-delay: ${index * 0.1}s">
+                                <div class="message-user rounded-3xl p-8 max-w-2xl shadow-xl">
+                                    <p class="text-white leading-relaxed text-base">💬 ${msg.content}</p>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        const colors = {
+                            'chatgpt': 'green',
+                            'gemini': 'blue', 
+                            'deepseek': 'teal',
+                            'grok': 'pink'
+                        };
+                        const icons = {
+                            'chatgpt': '🧠',
+                            'gemini': '⭐',
+                            'deepseek': '🔬',
+                            'grok': '⚡'
+                        };
+                        messagesDiv.innerHTML += `
+                            <div class="message-ai rounded-3xl p-8 w-full break-words border-l-4 border-${colors[msg.model]}-500 shadow-xl fade-in-up" style="animation-delay: ${index * 0.1}s">
+                                <div class="text-xs text-${colors[msg.model]}-400 mb-4 font-bold uppercase tracking-wide">${icons[msg.model]} ${msg.model.toUpperCase()}</div>
+                                <p class="text-gray-100 leading-relaxed text-base">${msg.content}</p>
+                            </div>
+                        `;
+                    }
+                });
+            }
+            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        async function sendMessage() {
+            if (!currentUser) {
+                showAuth();
+                return;
+            }
+
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            allMessages.push({
+                role: 'user',
+                content: message,
+                timestamp: Date.now()
+            });
+            
+            input.value = '';
+            displayMessages();
+            
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML += `
+                <div id="loading" class="text-center text-gray-400 mb-8 fade-in-up">
+                    <div class="inline-flex items-center space-x-3">
+                        <div class="w-3 h-3 bg-cyan-500 rounded-full pulse-animation"></div>
+                        <div class="w-3 h-3 bg-purple-500 rounded-full pulse-animation" style="animation-delay: 0.2s"></div>
+                        <div class="w-3 h-3 bg-pink-500 rounded-full pulse-animation" style="animation-delay: 0.4s"></div>
+                        <span class="ml-3 text-lg">😊 AI models are thinking...</span>
+                    </div>
+                </div>
+            `;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            const models = [
+                {name: 'chatgpt', model: 'openai/gpt-oss-20b:free'},
+                {name: 'gemini', model: 'google/gemini-2.5-flash-image-preview:free'},
+                {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b:free'},
+                {name: 'grok', model: 'x-ai/grok-3-mini'}
+            ];
+            
+            // Determine which models to query based on current tab
+            let modelsToQuery = models;
+            if (currentTab !== 'all') {
+                modelsToQuery = models.filter(model => model.name === currentTab);
+            }
+            
+            const providerCandidates = {
+                grok: ['x-ai/grok-3-mini', 'x-ai/grok-3', 'meta-llama/llama-3.1-8b-instruct'],
+                kimi: ['moonshotai/kimi-k2:free', 'moonshotai/kimi-k2', 'qwen/qwen-2.5-7b-instruct:free']
+            };
+            for (let i = 0; i < modelsToQuery.length; i++) {
+                setTimeout(async () => {
+                    const modelName = modelsToQuery[i].name;
+                    const candidates = providerCandidates[modelName] || [modelsToQuery[i].model];
+                    let success = false;
+                    let lastData = null;
+                    for (let c = 0; c < candidates.length && !success; c++) {
+                        try {
+                            const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+                            const response = await fetch(`${API_BASE}/chat`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    model: candidates[c],
+                                    messages: (() => {
+                                        const systemPrompt = 'You are JOchat, a helpful AI assistant. Use prior conversation context. Be concise and accurate.';
+                                        const history = (() => {
+                                            const h = [];
+                                            for (let j = 0; j < allMessages.length; j++) {
+                                                const m = allMessages[j];
+                                                if (m.role === 'user' || m.role === 'assistant') {
+                                                    h.push({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content });
+                                                }
+                                            }
+                                            return h.slice(-10);
+                                        })();
+                                        return [
+                                            { role: 'system', content: systemPrompt },
+                                            ...history,
+                                            { role: 'user', content: message }
+                                        ];
+                                    })(),
+                                    max_tokens: 700,
+                                    temperature: 0.7,
+                                    top_p: 1
+                                })
+                            });
+                            console.log('JOchat request idx', modelName, 'candidate=', candidates[c], 'statusPending');
+                            const data = await response.json();
+                            lastData = data;
+                            if (!response.ok || data.error) {
+                                console.log('JOchat response error idx', modelName, 'candidate=', candidates[c], 'status=', response.status, 'err=', data?.error?.message);
+                                throw new Error(data.error?.message || `HTTP ${response.status}`);
+                            } else {
+                                console.log('JOchat response ok idx', modelName, 'candidate=', candidates[c], 'status=', response.status);
+                            }
+                            const content = data.choices?.[0]?.message?.content || `😊 ${modelName} is taking a break... Other models are still working! ✨`;
+                            allMessages.push({
+                                role: 'assistant',
+                                model: modelName,
+                                content: content + (c > 0 ? ' (fallback used)' : ''),
+                                timestamp: Date.now()
+                            });
+                            success = true;
+                        } catch (e) {
+                            // try next candidate
+                        }
+                    }
+                    if (!success) {
+                        allMessages.push({
+                            role: 'assistant',
+                            model: modelName,
+                            content: `😊 ${modelName} is taking a break... Other models are still working! ✨`,
+                            timestamp: Date.now()
+                        });
+                    }
+                    if (i === 0) {
+                        const loading = document.getElementById('loading');
+                        if (loading) loading.remove();
+                    }
+                    displayMessages();
+                    saveUserData();
+                }, i * 600);
+            }
+        }
+
+        // Settings Functions
+        let settings = {
+            theme: 'dark',
+            animations: true,
+            sounds: false,
+            autoScroll: true,
+            fontSize: 'text-base'
+        };
+
+        function showSettings() {
+            document.getElementById('settingsModal').classList.remove('hidden');
+            loadSettings();
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function loadSettings() {
+            const saved = localStorage.getItem('jochat_settings');
+            if (saved) {
+                settings = JSON.parse(saved);
+            }
+            updateSettingsUI();
+        }
+
+        function saveSettings() {
+            localStorage.setItem('jochat_settings', JSON.stringify(settings));
+        }
+
+        function updateSettingsUI() {
+            // Theme buttons
+            document.querySelectorAll('[id^="theme-"]').forEach(btn => {
+                btn.className = btn.className.replace('border-purple-500', 'border-gray-600');
+            });
+            document.getElementById(`theme-${settings.theme}`).className = 
+                document.getElementById(`theme-${settings.theme}`).className.replace('border-gray-600', 'border-purple-500');
+            
+            // Toggle switches
+            updateToggle('animations-toggle', settings.animations);
+            updateToggle('sounds-toggle', settings.sounds);
+            updateToggle('autoscroll-toggle', settings.autoScroll);
+            
+            // Font size
+            document.getElementById('fontSize').value = settings.fontSize;
+        }
+
+        function updateToggle(id, enabled) {
+            const toggle = document.getElementById(id);
+            const dot = toggle.querySelector('div');
+            if (enabled) {
+                toggle.className = toggle.className.replace('bg-gray-600', 'bg-purple-500');
+                dot.className = dot.className.replace('left-0.5', 'right-0.5');
+            } else {
+                toggle.className = toggle.className.replace('bg-purple-500', 'bg-gray-600');
+                dot.className = dot.className.replace('right-0.5', 'left-0.5');
+            }
+        }
+
+        function setTheme(theme) {
+            settings.theme = theme;
+            saveSettings();
+            updateSettingsUI();
+            if (theme === 'light') {
+                document.body.className = 'bg-gray-100 text-gray-900 min-h-screen light-theme';
+            } else {
+                document.body.className = 'bg-gray-900 text-white min-h-screen';
+            }
+        }
+
+        function toggleAnimations() {
+            settings.animations = !settings.animations;
+            saveSettings();
+            updateSettingsUI();
+            if (!settings.animations) {
+                document.querySelectorAll('*').forEach(el => {
+                    el.style.animation = 'none';
+                });
+            }
+        }
+
+        function toggleSounds() {
+            settings.sounds = !settings.sounds;
+            saveSettings();
+            updateSettingsUI();
+        }
+
+        function toggleAutoScroll() {
+            settings.autoScroll = !settings.autoScroll;
+            saveSettings();
+            updateSettingsUI();
+        }
+
+        function setFontSize() {
+            settings.fontSize = document.getElementById('fontSize').value;
+            saveSettings();
+            document.querySelectorAll('.message-ai p, .message-user p').forEach(el => {
+                el.className = el.className.replace(/text-\w+/, settings.fontSize);
+            });
+        }
+
+        function resetSettings() {
+            settings = {
+                theme: 'dark',
+                animations: true,
+                sounds: false,
+                autoScroll: true,
+                fontSize: 'text-base'
+            };
+            saveSettings();
+            updateSettingsUI();
+            setTheme('dark');
+            location.reload();
+        }
+
+        // Chat History Functions
+        function showChatHistory() {
+            if (!currentUser) return;
+            document.getElementById('chatHistoryModal').classList.remove('hidden');
+            loadChatHistory();
+        }
+
+        function closeChatHistory() {
+            document.getElementById('chatHistoryModal').classList.add('hidden');
+        }
+
+        function loadChatHistory() {
+            const historyList = document.getElementById('chatHistoryList');
+            const savedChats = JSON.parse(localStorage.getItem(`jochat_chat_sessions_${currentUser.email}`) || '[]');
+            
+            if (savedChats.length === 0) {
+                historyList.innerHTML = '<p class="text-gray-400 text-center py-8">No chat history found</p>';
+                return;
+            }
+            
+            historyList.innerHTML = savedChats.map((session, index) => `
+                <div class="bg-gray-800 p-4 rounded-xl hover:bg-gray-700 transition-all cursor-pointer" onclick="loadChatSession(${index})">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="font-semibold">${session.title || 'Chat Session'}</h3>
+                            <p class="text-sm text-gray-400">${new Date(session.timestamp).toLocaleDateString()}</p>
+                        </div>
+                        <div class="text-sm text-gray-400">${session.messages.length} messages</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadChatSession(index) {
+            const savedChats = JSON.parse(localStorage.getItem(`jochat_chat_sessions_${currentUser.email}`) || '[]');
+            if (savedChats[index]) {
+                allMessages = savedChats[index].messages;
+                displayMessages();
+                closeChatHistory();
+                startChat();
+            }
+        }
+
+        function saveChatSession() {
+            if (!currentUser || allMessages.length === 0) return;
+            
+            const sessions = JSON.parse(localStorage.getItem(`jochat_chat_sessions_${currentUser.email}`) || '[]');
+            const firstUserMessage = allMessages.find(msg => msg.role === 'user');
+            const title = firstUserMessage ? firstUserMessage.content.substring(0, 50) + '...' : 'New Chat';
+            
+            sessions.push({
+                title,
+                messages: [...allMessages],
+                timestamp: Date.now()
+            });
+            
+            localStorage.setItem(`jochat_chat_sessions_${currentUser.email}`, JSON.stringify(sessions));
+        }
+
+        // New Chat Function
+        function newChat() {
+            if (allMessages.length > 0) {
+                saveChatSession();
+            }
+            allMessages = [];
+            displayMessages();
+        }
+
+        // Initialize
+        window.onload = function() {
+            const savedUser = localStorage.getItem('jochat_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                loadUserData();
+                updateUI();
+            }
+            loadSettings();
+        };
+    </script>
+</body>
+</html>

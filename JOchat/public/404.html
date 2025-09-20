@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | JOchat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html { -webkit-text-size-adjust: 100%; }
+        body { overflow-x: hidden; }
+        img, video, canvas, svg { max-width: 100%; height: auto; }
+    </style>
+
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+        .float-animation { animation: float 3s ease-in-out infinite; }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex items-center justify-center">
+    <div class="text-center text-white">
+        <div class="text-9xl font-bold mb-4 float-animation">404</div>
+        <h1 class="text-2xl font-bold mb-4 gradient-text">Page Not Found</h1>
+        <p class="text-base mb-8">The page you're looking for doesn't exist.</p>
+        <a href="/index.html" class="bg-white text-purple-600 px-6 sm:px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all block w-full sm:w-auto">
+            Go Back Home
+        </a>
+    </div>
+</body>
+</html>

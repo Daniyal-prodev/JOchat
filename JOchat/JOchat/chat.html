@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOchat - Chat</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="../a.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../a.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../a.png">
+    <meta name="theme-color" content="#a855f7">
+    <style>
+        html { -webkit-text-size-adjust: 100%; }
+        body { overflow-x: hidden; }
+        img, video, canvas, svg { max-width: 100%; height: auto; }
+        pre, code { white-space: pre-wrap; word-wrap: break-word; overflow-wrap: anywhere; }
+        iframe { max-width: 100%; }
+        .safe-px { padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right)); }
+        .tap-target { min-height: 44px; min-width: 44px; }
+    </style>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%); 
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        .gradient-text { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .btn-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-hover:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(168, 85, 247, 0.5); }
+        .hover-lift { transition: all 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-5px); }
+        .icon-hover { transition: all 0.3s ease; }
+        .icon-hover:hover { transform: rotate(15deg) scale(1.2); }
+        .tab-hover { transition: all 0.3s ease; }
+        .tab-hover:hover { transform: translateY(-2px); }
+        .input-hover { transition: all 0.3s ease; }
+        .input-hover:hover { border-color: #a855f7; box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2); }
+        .tab-active { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); 
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+        .message-user { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); 
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+        }
+        .message-ai { 
+            background: rgba(31, 41, 55, 0.8); 
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #1f2937; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%); border-radius: 8px; border: 2px solid #1f2937; }
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%); }
+        
+        /* Animations */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(1.1); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.3); } 50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.6); } }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounceIn { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.05); } 70% { transform: scale(0.9); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes typewriter { from { width: 0; } to { width: 100%; } }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5), 0 0 40px rgba(102, 126, 234, 0.3), 0 0 60px rgba(102, 126, 234, 0.1);
+        }
+        
+        .slide-in-up { animation: slideInUp 0.6s ease-out; }
+        .bounce-in { animation: bounceIn 0.8s ease-out; }
+        
+        .model-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        .model-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .animated-line {
+            background: linear-gradient(90deg, transparent, #a855f7, transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s ease-in-out infinite;
+        }
+        
+        .fade-in-up { animation: fadeInUp 0.8s ease-out; }
+        .pulse-animation { animation: pulse 2s infinite; }
+        .float-animation { animation: float 3s ease-in-out infinite; }
+        .glow-animation { animation: glow 2s ease-in-out infinite; }
+        
+        /* Modal Styles */
+        .modal-backdrop { backdrop-filter: blur(15px); background: rgba(0, 0, 0, 0.8); }
+        .modal-content { background: linear-gradient(135deg, #1f2937 0%, #111827 100%); }
+        
+        /* Input Focus Effects */
+        .input-focus { transition: all 0.4s ease; }
+        .input-focus:focus { box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.4); transform: translateY(-2px); }
+        
+        /* Sidebar Styles */
+        .sidebar-btn { transition: all 0.3s ease; }
+        .sidebar-btn:hover { transform: translateX(5px); background: rgba(168, 85, 247, 0.2); }
+        .sidebar-btn:active { transform: scale(0.95); }
+        
+        /* Sidebar Animation */
+        .sidebar { 
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+            transform-origin: left center;
+            width: 16rem;
+            flex-shrink: 0;
+        }
+        .sidebar-hidden { 
+            transform: translateX(-100%) scale(0.95); 
+            width: 0; 
+            min-width: 0; 
+            opacity: 0;
+            pointer-events: none;
+        }
+        .sidebar-visible { 
+            transform: translateX(0) scale(1); 
+            width: 16rem; 
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* Main Area Expansion */
+        .main-area {
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            flex: 1;
+        }
+        
+        /* Sidebar Content Animation */
+        .sidebar-content { transition: all 0.3s ease 0.1s; }
+        .sidebar-hidden .sidebar-content { opacity: 0; transform: translateX(-20px); }
+        .sidebar-visible .sidebar-content { opacity: 1; transform: translateX(0); }
+        
+        /* Light Theme */
+        .light-theme { background: linear-gradient(135deg, #67e8f9 0%, #a855f7 50%, #ec4899 100%); color: #111827; }
+        .light-theme .modal-content { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); }
+        .light-theme .message-ai { background: #f3f4f6; color: #111827; }
+        .light-theme .bg-gray-800 { background: #f3f4f6; }
+        .light-theme .bg-gray-700 { background: #e5e7eb; }
+        .light-theme .text-white { color: #111827; }
+        .light-theme .text-gray-300 { color: #374151; }
+        .light-theme .text-gray-300 { color: #6b7280; }
+        .light-theme .text-gray-100 { color: #111827; }
+        .light-theme .border-gray-700 { border-color: #d1d5db; }
+        .light-theme .border-gray-600 { border-color: #d1d5db; }
+        .light-theme .bg-gray-800\/50 { background: rgba(243, 244, 246, 0.5); }
+        .light-theme .bg-gray-800\/95 { background: rgba(243, 244, 246, 0.95); }
+        
+        /* Dropdown */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content { display: none; position: absolute; right: 0; background: #1f2937; min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; border-radius: 12px; border: 1px solid #374151; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a { color: #d1d5db; padding: 12px 16px; text-decoration: none; display: block; transition: all 0.3s ease; }
+        .dropdown-content a:hover { background: #374151; }
+        .light-theme .dropdown-content { background: #f3f4f6; border: 1px solid #d1d5db; }
+        .light-theme .dropdown-content a { color: #111827; }
+        .light-theme .dropdown-content a:hover { background: #e5e7eb; }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar { width: 16rem !important; }
+            .sidebar-visible { width: 16rem !important; }
+            .h-screen { height: 100vh; height: 100dvh; }
+            .grid-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+            .text-xs { font-size: 0.75rem !important; line-height: 1.2; }
+            .text-sm { font-size: 0.875rem !important; line-height: 1.3; }
+            .text-base { font-size: 1rem !important; line-height: 1.4; }
+        }
+        
+        @media (max-width: 480px) {
+            .sidebar { width: 14rem !important; }
+            .sidebar-visible { width: 14rem !important; }
+            .grid-cols-4 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
+            .max-w-xl { max-width: 95% !important; }
+            .text-xs { font-size: 0.8rem !important; line-height: 1.3; }
+            .text-sm { font-size: 0.9rem !important; line-height: 1.4; }
+            .text-base { font-size: 1rem !important; line-height: 1.5; }
+            .text-lg { font-size: 1.1rem !important; }
+            .p-3 { padding: 0.75rem !important; }
+            .px-3 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+            .py-3 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+            .space-x-1 > :not([hidden]) ~ :not([hidden]) { margin-left: 0.25rem !important; }
+            .space-x-2 > :not([hidden]) ~ :not([hidden]) { margin-left: 0.5rem !important; }
+            .rounded-xl { border-radius: 0.75rem !important; }
+            .rounded-2xl { border-radius: 1rem !important; }
+        }
+        @media (max-width: 1024px) {
+            .px-8 { padding-left: 1.5rem; padding-right: 1.5rem; }
+            .grid-cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+        }
+        @media (max-width: 320px) {
+            .px-8 { padding-left: 0.5rem; padding-right: 0.5rem; }
+            h1 { font-size: 1.25rem; }
+            h2 { font-size: 1.125rem; }
+            .p-4 { padding: 0.5rem !important; }
+        }
+
+    </style>
+</head>
+<body class="gradient-bg text-white min-h-screen">
+    <!-- Chat History Modal -->
+    <div id="chatHistoryModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+        <div class="modal-content rounded-3xl p-10 max-w-4xl w-full border border-gray-700 shadow-2xl glow-animation">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6 float-animation">
+                    <span class="text-2xl">💬</span>
+                </div>
+                <h2 class="text-xl font-bold gradient-text">Chat History</h2>
+            </div>
+            
+            <div id="chatHistoryList" class="space-y-4 max-h-96 overflow-y-auto">
+                <!-- Chat history items will be populated here -->
+            </div>
+            
+            <button onclick="closeChatHistory()" class="absolute top-6 right-6 text-gray-300 hover:text-white p-2 rounded-full hover:bg-gray-700 transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Chat Interface -->
+    <div class="h-screen flex">
+        <!-- Left Sidebar -->
+        <div class="sidebar bg-gray-800/30 backdrop-blur-xl border-r border-gray-700/50 flex flex-col sidebar-visible">
+            <div class="p-6 sidebar-content">
+                <div class="flex items-center space-x-4 mb-8 cursor-pointer hover:bg-gray-700/30 p-3 rounded-xl transition-all" onclick="toggleSidebar()">
+                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <img src="../a.png" alt="JOchat" class="w-10 h-10 brightness-150 contrast-125 drop-shadow-lg">
+                    </div>
+                    <span class="text-xl font-bold gradient-text">JOchat</span>
+                </div>
+                
+                <div class="space-y-3">
+                    <button onclick="newChat()" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-gray-700/50 hover:bg-gray-600/50 sidebar-btn">
+                        <span class="text-base">➕</span>
+                        <span class="font-medium">New Chat</span>
+                    </button>
+                    
+                    <button onclick="tempChat()" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-gray-700/50 hover:bg-gray-600/50 sidebar-btn">
+                        <span class="text-base">⏱️</span>
+                        <span class="font-medium">Temp Chat</span>
+                    </button>
+                    
+                    <!-- Chat Sessions List -->
+                    <div class="mt-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-300 font-medium">Recent Chats</span>
+                            <button onclick="toggleChatSessions()" id="toggleChatsBtn" class="text-xs text-gray-400 hover:text-white">
+                                <span id="toggleChatsText">Show</span>
+                            </button>
+                        </div>
+                        <div id="chatSessionsList" class="hidden space-y-2 max-h-60 overflow-y-auto">
+                            <!-- Chat sessions will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <button onclick="deleteAllChats()" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-red-600/50 hover:bg-red-500/50 sidebar-btn">
+                        <span class="text-base">🗑️</span>
+                        <span class="font-medium">Delete Chats</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-auto p-6 sidebar-content">
+                <div class="mb-4 p-3 bg-gray-700/30 rounded-xl text-center">
+                    <div class="text-xs text-gray-300 mb-1">Messages</div>
+                    <div id="messageCounter" class="text-base font-bold gradient-text">0</div>
+                </div>
+                
+                <button onclick="goHome()" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-gray-700/50 hover:bg-gray-600/50 sidebar-btn">
+                    <span class="text-xl">🏠</span>
+                    <span class="font-medium">Home</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Main Chat Area -->
+        <div class="main-area flex flex-col">
+            <!-- Header -->
+            <div class="bg-gray-800/30 backdrop-blur-xl border-b border-gray-700/50 px-3 sm:px-6 py-3 sm:py-5">
+                <div class="flex items-center justify-between">
+                    <button id="showSidebarBtn" onclick="toggleSidebar()" class="hidden p-2 rounded-xl bg-gray-700/50 hover:bg-gray-600/50 transition-all">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <div class="flex items-center space-x-2 sm:space-x-6">
+                        <span class="text-xs sm:text-sm text-gray-300 bg-gray-700/50 px-2 sm:px-4 py-1 sm:py-2 rounded-full hidden sm:inline">🚀 JOchat AI</span>
+                        <div class="flex items-center space-x-1 sm:space-x-2">
+                            <span id="chatUserAvatar" class="text-base sm:text-base">😊</span>
+                            <span id="chatUserName" class="text-gray-300 font-medium text-sm sm:text-base"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model Tabs -->
+            <div class="bg-gray-800/30 backdrop-blur-xl border-b border-gray-700/50 px-3 sm:px-6">
+                <div class="flex space-x-1 sm:space-x-3 overflow-x-auto py-2 sm:py-3">
+                    <button onclick="switchTab('all')" id="tab-all" class="tab-active px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
+                        🌟 All Models
+                    </button>
+                    <button onclick="switchTab('chatgpt')" id="tab-chatgpt" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
+                        🧠 ChatGPT
+                    </button>
+                    <button onclick="switchTab('gemini')" id="tab-gemini" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
+                        ⭐ Gemini
+                    </button>
+                    <button onclick="switchTab('deepseek')" id="tab-deepseek" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
+                        🔬 DeepSeek
+                    </button>
+                    <button onclick="switchTab('grok')" id="tab-grok" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
+                        ⚡ Grok
+                    </button>
+                    <button onclick="switchTab('qwen')" id="tab-qwen" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
+                        🔮 Qwen
+                    </button>
+                    <button onclick="switchTab('kimi')" id="tab-kimi" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
+                        🌙 Kimi
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div class="flex-1 overflow-hidden">
+                <div id="messages" class="h-full overflow-y-auto px-3 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-8">
+                    <div class="message-ai rounded-3xl p-8 max-w-4xl shadow-xl fade-in-up glass-effect neon-glow">
+                        <div class="text-xs text-purple-400 mb-4 font-bold uppercase tracking-wide bounce-in">🚀 JOCHAT SYSTEM</div>
+                        <p class="text-gray-100 leading-relaxed text-base slide-in-up">Welcome to JOchat! 🌟 Experience the power of 6 AI models working together. Ask anything and get diverse perspectives from ChatGPT, Gemini, DeepSeek, Grok, Qwen, and Kimi. Each model brings unique strengths to give you comprehensive, intelligent responses. Let's explore the future of AI collaboration! ✨</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="bg-gray-800/30 backdrop-blur-xl border-t border-gray-700/50 px-3 sm:px-6 py-4 sm:py-8">
+                <div class="flex space-x-2 sm:space-x-6">
+                    <div class="flex-1">
+                        <input 
+                            id="messageInput" 
+                            type="text" 
+                            placeholder="🚀 Ask anything..." 
+                            class="w-full px-4 sm:px-8 py-3 sm:py-5 bg-gray-700/60 backdrop-blur-sm border border-gray-600 rounded-2xl sm:rounded-3xl text-white placeholder-gray-400 input-focus input-hover text-sm sm:text-base"
+                            autocomplete="off"
+                            spellcheck="false"
+                            onkeypress="if(event.key==='Enter') sendMessage()"
+                            maxlength="1000"
+                        />
+                    </div>
+                    <button onclick="sendMessage()" class="gradient-bg px-4 sm:px-10 py-3 sm:py-5 rounded-2xl sm:rounded-3xl font-medium btn-hover shadow-xl neon-glow pulse-animation hover:scale-105 transition-all duration-300">
+                        <svg class="w-5 h-5 sm:w-8 sm:h-8 icon-hover" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'all';
+        let allMessages = [];
+        let currentUser = null;
+        let settings = {
+            theme: 'dark',
+            animations: true,
+            sounds: false,
+            autoScroll: true,
+            fontSize: 'text-base'
+        };
+
+        // Load user and settings
+        function loadUserAndSettings() {
+            const savedUser = localStorage.getItem('jochat_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                loadUserData();
+                updateUI();
+            } else {
+                window.location.href = './index.html';
+                return;
+            }
+            
+            const savedSettings = localStorage.getItem('jochat_settings');
+            if (savedSettings) {
+                settings = JSON.parse(savedSettings);
+                applyTheme();
+            }
+        }
+
+        function updateUI() {
+            if (currentUser) {
+                document.getElementById('chatUserName').textContent = currentUser.name;
+                document.getElementById('chatUserAvatar').textContent = currentUser.avatar || '😊';
+            }
+        }
+
+        function loadUserData() {
+            if (currentUser) {
+                const savedChats = localStorage.getItem(`jochat_chats_${currentUser.email}`);
+                if (savedChats) {
+                    allMessages = JSON.parse(savedChats);
+                }
+            }
+        }
+
+        function saveUserData() {
+            if (currentUser) {
+                localStorage.setItem(`jochat_chats_${currentUser.email}`, JSON.stringify(allMessages));
+            }
+        }
+
+        function applyTheme() {
+            if (settings.theme === 'light') {
+                document.body.className = 'gradient-bg text-gray-900 min-h-screen light-theme';
+            } else {
+                document.body.className = 'gradient-bg text-white min-h-screen';
+            }
+        }
+
+        function goHome() {
+            window.location.href = './index.html';
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            document.querySelectorAll('[id^="tab-"]').forEach(t => {
+                t.className = 'px-8 py-4 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-2xl whitespace-nowrap transition-all tab-hover';
+            });
+            document.getElementById(`tab-${tab}`).className = 'tab-active px-8 py-4 text-sm font-medium rounded-2xl whitespace-nowrap transition-all tab-hover';
+            
+            displayMessages();
+        }
+
+        function updateMessageCounter() {
+            const counter = document.getElementById('messageCounter');
+            if (counter) {
+                const userMessages = allMessages.filter(msg => msg.role === 'user');
+                counter.textContent = userMessages.length;
+            }
+        }
+        
+        function displayMessages() {
+            const messagesDiv = document.getElementById('messages');
+            let filteredMessages = allMessages;
+            
+            if (currentTab !== 'all') {
+                filteredMessages = allMessages.filter(msg => 
+                    msg.role === 'user' || msg.model === currentTab
+                );
+            }
+            
+            updateMessageCounter();
+            
+            messagesDiv.innerHTML = `
+                <div class="message-ai rounded-2xl p-4 max-w-4xl shadow-xl fade-in-up glass-effect neon-glow">
+                    <div class="text-xs text-purple-400 mb-2 font-bold uppercase tracking-wide bounce-in">🚀 JOCHAT SYSTEM</div>
+                    <p class="text-gray-100 leading-relaxed text-sm slide-in-up">Welcome to JOchat! 🌟 Experience the power of 6 AI models working together. Ask anything - from coding help to creative writing, problem-solving to learning new topics. Each model brings its unique strengths to give you comprehensive, intelligent responses. Let's explore the future of AI collaboration! ✨</p>
+                </div>
+            `;
+            
+            if (currentTab === 'all') {
+                // Group messages by user input
+                const groupedMessages = [];
+                let currentGroup = null;
+                
+                filteredMessages.forEach(msg => {
+                    if (msg.role === 'user') {
+                        if (currentGroup) groupedMessages.push(currentGroup);
+                        currentGroup = { user: msg, responses: [] };
+                    } else if (currentGroup) {
+                        currentGroup.responses.push(msg);
+                    }
+                });
+                if (currentGroup) groupedMessages.push(currentGroup);
+                
+                groupedMessages.forEach((group, groupIndex) => {
+                    // User message
+                    messagesDiv.innerHTML += `
+                        <div class="flex justify-end fade-in-up mb-4" style="animation-delay: ${groupIndex * 0.1}s">
+                            <div class="message-user rounded-2xl p-4 max-w-xl shadow-xl">
+                                <p class="text-white leading-relaxed text-sm">💬 ${group.user.content}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // AI responses in vertical columns
+                    if (group.responses.length > 0) {
+                        const availableResponses = group.responses.length;
+                        const gridCols = availableResponses === 1 ? 'grid-cols-1' : availableResponses === 2 ? 'grid-cols-2' : availableResponses === 3 ? 'grid-cols-3' : 'grid-cols-4';
+                        messagesDiv.innerHTML += `<div class="grid ${gridCols} gap-2 sm:gap-3 mb-4 sm:mb-6">`;
+                        
+                        const models = ['chatgpt', 'gemini', 'deepseek', 'grok'];
+                        const colors = {
+                            'chatgpt': 'green',
+                            'gemini': 'blue', 
+                            'deepseek': 'teal',
+                            'grok': 'pink'
+                        };
+                        const icons = {
+                            'chatgpt': '🧠',
+                            'gemini': '⭐',
+                            'deepseek': '🔬',
+                            'grok': '⚡'
+                        };
+                        
+                        ['chatgpt', 'gemini', 'deepseek', 'grok', 'qwen', 'kimi'].forEach((modelName, index) => {
+                            const response = group.responses.find(r => r.model === modelName);
+                            const colors = {'chatgpt': 'green', 'gemini': 'blue', 'deepseek': 'teal', 'grok': 'pink', 'qwen': 'purple', 'kimi': 'yellow'};
+                            const icons = {'chatgpt': '🧠', 'gemini': '⭐', 'deepseek': '🔬', 'grok': '⚡', 'qwen': '🔮', 'kimi': '🌙'};
+                            if (response) {
+                                messagesDiv.innerHTML += `
+                                    <div class="model-card border border-${colors[modelName]}-500/30 rounded-xl sm:rounded-2xl p-2 sm:p-3 glass-effect fade-in-up hover:border-${colors[modelName]}-400/50 transition-all duration-300">
+                                        <div class="text-xs sm:text-xs text-${colors[modelName]}-400 mb-1 sm:mb-2 font-bold uppercase tracking-wide border-b border-${colors[modelName]}-500/20 pb-1 bounce-in">
+                                            ${icons[modelName]} ${modelName.toUpperCase()}
+                                        </div>
+                                        <div class="h-px bg-gradient-to-r from-${colors[modelName]}-500/50 to-transparent mb-1 sm:mb-2 animated-line"></div>
+                                        <p class="text-gray-100 leading-relaxed text-xs sm:text-xs slide-in-up" style="font-size: 0.8rem; line-height: 1.4;">${response.content}</p>
+                                    </div>
+                                `;
+                            }
+                        });
+                        
+                        messagesDiv.innerHTML += `</div>`;
+                    }
+                });
+            } else {
+                // Single model view
+                filteredMessages.forEach((msg, index) => {
+                    if (msg.role === 'user') {
+                        messagesDiv.innerHTML += `
+                            <div class="flex justify-end fade-in-up" style="animation-delay: ${index * 0.1}s">
+                                <div class="message-user rounded-2xl p-4 max-w-xl shadow-xl">
+                                    <p class="text-white leading-relaxed text-sm">💬 ${msg.content}</p>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        const colors = {'chatgpt': 'green', 'gemini': 'blue', 'deepseek': 'teal', 'grok': 'pink', 'qwen': 'purple', 'kimi': 'yellow'};
+                        const icons = {'chatgpt': '🧠', 'gemini': '⭐', 'deepseek': '🔬', 'grok': '⚡', 'qwen': '🔮', 'kimi': '🌙'};
+                        messagesDiv.innerHTML += `
+                            <div class="message-ai model-card rounded-2xl p-4 max-w-4xl border-l-4 border-${colors[msg.model]}-500 shadow-xl fade-in-up glass-effect" style="animation-delay: ${index * 0.1}s">
+                                <div class="text-xs text-${colors[msg.model]}-400 mb-2 font-bold uppercase tracking-wide bounce-in">${icons[msg.model]} ${msg.model.toUpperCase()}</div>
+                                <p class="text-gray-100 leading-relaxed text-sm slide-in-up">${msg.content}</p>
+                            </div>
+                        `;
+                    }
+                });
+            }
+            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function getConversationHistory(modelName) {
+            const history = [];
+            const userMessages = allMessages.filter(msg => msg.role === 'user');
+            const modelMessages = allMessages.filter(msg => msg.role === 'assistant' && msg.model === modelName);
+            
+            for (let i = 0; i < Math.min(userMessages.length, modelMessages.length); i++) {
+                history.push({role: 'user', content: userMessages[i].content});
+                history.push({role: 'assistant', content: modelMessages[i].content});
+            }
+            
+            return history.slice(-10); // Keep last 5 exchanges
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            allMessages.push({
+                role: 'user',
+                content: message,
+                timestamp: Date.now()
+            });
+            
+            input.value = '';
+            displayMessages();
+            
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML += `
+                <div id="loading" class="text-center text-gray-300 mb-4 fade-in-up">
+                    <div class="inline-flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-cyan-500 rounded-full pulse-animation"></div>
+                        <div class="w-2 h-2 bg-purple-500 rounded-full pulse-animation" style="animation-delay: 0.2s"></div>
+                        <div class="w-2 h-2 bg-pink-500 rounded-full pulse-animation" style="animation-delay: 0.4s"></div>
+                        <span class="ml-2 text-sm">😊 AI models thinking...</span>
+                    </div>
+                </div>
+            `;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            const models = [
+                {name: 'chatgpt', model: 'openai/gpt-4o-mini'},
+                {name: 'gemini', model: 'google/gemini-flash-1.5'},
+                {name: 'deepseek', model: 'deepseek/deepseek-chat'},
+                {name: 'grok', model: 'meta-llama/llama-3.1-8b-instruct:free'},
+                {name: 'qwen', model: 'meta-llama/llama-3.1-8b-instruct:free'},
+                {name: 'kimi', model: 'moonshotai/kimi-k2:free'}
+            ];
+            
+            let modelsToQuery = models;
+            if (currentTab !== 'all') {
+                modelsToQuery = models.filter(model => model.name === currentTab);
+            }
+            
+            for (let i = 0; i < modelsToQuery.length; i++) {
+                setTimeout(async () => {
+                    try {
+                        const conversationHistory = getConversationHistory(modelsToQuery[i].name);
+                        const systemPrompts = {
+                            'chatgpt': 'You are a helpful AI assistant. Provide clear, accurate, and helpful responses.',
+                            'gemini': 'You are a helpful AI assistant. Provide clear, accurate, and helpful responses.',
+                            'deepseek': 'You are a helpful AI assistant. Provide clear, accurate, and helpful responses.',
+                            'grok': 'You are a helpful AI assistant. Provide clear, accurate, and helpful responses.'
+                        };
+                        
+                        const messages = [
+                            {role: 'user', content: message}
+                        ];
+                        
+                        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+                        const response = await fetch(`${API_BASE}/chat`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                model: modelsToQuery[i].model,
+                                messages: messages,
+                                max_tokens: 200,
+                                temperature: 0.7
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        }
+                        
+                        const data = await response.json();
+                        
+                        if (data.error) {
+                            throw new Error(data.error.message || 'API Error');
+                        }
+                        
+                        const content = data.choices?.[0]?.message?.content || 'No response received';
+                        
+                        allMessages.push({
+                            role: 'assistant',
+                            model: modelsToQuery[i].name,
+                            content: content,
+                            timestamp: Date.now()
+                        });
+                        
+                        if (i === 0) {
+                            const loading = document.getElementById('loading');
+                            if (loading) loading.remove();
+                        }
+                        
+                        displayMessages();
+                        saveUserData();
+                        autoNameChat();
+                        
+                    } catch (error) {
+                        console.error(`${modelsToQuery[i].name} Error:`, error);
+                        
+                        let errorMessage = 'This bot is under process, you will be updated';
+                        if (error.message.includes('401')) {
+                            errorMessage = 'This bot is under process, you will be updated';
+                        } else if (error.message.includes('429')) {
+                            errorMessage = 'This bot is under process, you will be updated';
+                        } else if (error.message.includes('404')) {
+                            errorMessage = 'This bot is under process, you will be updated';
+                        } else if (error.message.includes('500')) {
+                            errorMessage = 'This bot is under process, you will be updated';
+                        } else {
+                            errorMessage = 'This bot is under process, you will be updated';
+                        }
+                        
+                        allMessages.push({
+                            role: 'assistant',
+                            model: modelsToQuery[i].name,
+                            content: `❌ ${errorMessage}`,
+                            timestamp: Date.now()
+                        });
+                        
+                        if (i === 0) {
+                            const loading = document.getElementById('loading');
+                            if (loading) loading.remove();
+                        }
+                        
+                        displayMessages();
+                        saveUserData();
+                    }
+                }, i * 5000);
+            }
+        }
+
+        function newChat() {
+            if (allMessages.length > 0 && !isTemporaryChat) {
+                saveChatSession();
+            }
+            allMessages = [];
+            isTemporaryChat = false;
+            currentChatId = null;
+            displayMessages();
+            updateMessageCounter();
+        }
+        
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const showBtn = document.getElementById('showSidebarBtn');
+            
+            if (sidebar.classList.contains('sidebar-hidden')) {
+                sidebar.classList.remove('sidebar-hidden');
+                sidebar.classList.add('sidebar-visible');
+                showBtn.classList.add('hidden');
+            } else {
+                sidebar.classList.add('sidebar-hidden');
+                sidebar.classList.remove('sidebar-visible');
+                showBtn.classList.remove('hidden');
+            }
+        }
+
+        let chatSessionsVisible = false;
+        
+        function toggleChatSessions() {
+            const sessionsList = document.getElementById('chatSessionsList');
+            const toggleBtn = document.getElementById('toggleChatsText');
+            
+            chatSessionsVisible = !chatSessionsVisible;
+            if (chatSessionsVisible) {
+                sessionsList.classList.remove('hidden');
+                toggleBtn.textContent = 'Hide';
+                loadChatSessions();
+            } else {
+                sessionsList.classList.add('hidden');
+                toggleBtn.textContent = 'Show';
+            }
+        }
+        
+        function loadChatSessions() {
+            const sessionsList = document.getElementById('chatSessionsList');
+            const savedChats = JSON.parse(localStorage.getItem(`jochat_chat_sessions_${currentUser.email}`) || '[]');
+            
+            if (savedChats.length === 0) {
+                sessionsList.innerHTML = '<p class="text-gray-400 text-center py-4 text-xs">No saved chats</p>';
+                return;
+            }
+            
+            sessionsList.innerHTML = savedChats.slice(-10).reverse().map((session, index) => {
+                const userMessageCount = session.messages.filter(msg => msg.role === 'user').length;
+                const actualIndex = savedChats.length - 1 - index;
+                return `
+                    <div class="bg-gray-700/30 p-3 rounded-lg hover:bg-gray-600/30 transition-all group">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 cursor-pointer" onclick="loadChatSession(${actualIndex})">
+                                <h4 class="text-sm font-medium text-white truncate">${session.title || 'Chat Session'}</h4>
+                                <p class="text-xs text-gray-400">${userMessageCount} messages • ${new Date(session.timestamp).toLocaleDateString()}</p>
+                            </div>
+                            <button onclick="deleteChatSession(${actualIndex})" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 p-1 transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function loadChatSession(index) {
+            const savedChats = JSON.parse(localStorage.getItem(`jochat_chat_sessions_${currentUser.email}`) || '[]');
+            if (savedChats[index]) {
+                allMessages = savedChats[index].messages;
+                isTemporaryChat = false;
+                currentChatId = savedChats[index].id;
+                displayMessages();
+                updateMessageCounter();
+            }
+        }
+        
+        function deleteChatSession(index) {
+            if (confirm('Delete this chat session?')) {
+                const savedChats = JSON.parse(localStorage.getItem(`jochat_chat_sessions_${currentUser.email}`) || '[]');
+                savedChats.splice(index, 1);
+                localStorage.setItem(`jochat_chat_sessions_${currentUser.email}`, JSON.stringify(savedChats));
+                loadChatSessions();
+            }
+        }
+
+        let isTemporaryChat = false;
+        
+        function tempChat() {
+            if (allMessages.length > 0 && !isTemporaryChat) {
+                saveChatSession();
+            }
+            allMessages = [];
+            isTemporaryChat = true;
+            displayMessages();
+            updateMessageCounter();
+        }
+        
+        function deleteAllChats() {
+            if (confirm('Are you sure you want to delete all chat history? This cannot be undone.')) {
+                localStorage.removeItem(`jochat_chat_sessions_${currentUser.email}`);
+                localStorage.removeItem(`jochat_chats_${currentUser.email}`);
+                allMessages = [];
+                displayMessages();
+                updateMessageCounter();
+            }
+        }
+        
+        let currentChatId = null;
+        
+        async function generateChatTitle(firstMessage) {
+            try {
+                const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+                const response = await fetch(`${API_BASE}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'mistralai/mistral-7b-instruct:free',
+                        messages: [
+                            {role: 'system', content: 'Generate a short, descriptive title (max 4 words) for this conversation topic. Only return the title, nothing else.'},
+                            {role: 'user', content: firstMessage}
+                        ],
+                        max_tokens: 20,
+                        temperature: 0.3
+                    })
+                });
+                
+                const data = await response.json();
+                return data.choices?.[0]?.message?.content?.trim() || firstMessage.substring(0, 25) + '...';
+            } catch (error) {
+                return firstMessage.substring(0, 25) + '...';
+            }
+        }
+
+        async function autoNameChat() {
+            const userMessages = allMessages.filter(msg => msg.role === 'user');
+            if (userMessages.length === 1 && !isTemporaryChat && currentUser && !currentChatId) {
+                const title = await generateChatTitle(userMessages[0].content);
+                currentChatId = Date.now();
+                
+                const sessions = JSON.parse(localStorage.getItem(`jochat_chat_sessions_${currentUser.email}`) || '[]');
+                sessions.push({
+                    id: currentChatId,
+                    title,
+                    messages: [...allMessages],
+                    timestamp: currentChatId
+                });
+                
+                localStorage.setItem(`jochat_chat_sessions_${currentUser.email}`, JSON.stringify(sessions));
+            } else if (currentChatId && !isTemporaryChat && currentUser) {
+                const sessions = JSON.parse(localStorage.getItem(`jochat_chat_sessions_${currentUser.email}`) || '[]');
+                const sessionIndex = sessions.findIndex(s => s.id === currentChatId);
+                if (sessionIndex !== -1) {
+                    sessions[sessionIndex].messages = [...allMessages];
+                    localStorage.setItem(`jochat_chat_sessions_${currentUser.email}`, JSON.stringify(sessions));
+                }
+            }
+        }
+
+        function saveChatSession() {
+            if (!currentUser || allMessages.length === 0 || isTemporaryChat) return;
+            
+            const sessions = JSON.parse(localStorage.getItem(`jochat_chat_sessions_${currentUser.email}`) || '[]');
+            const firstUserMessage = allMessages.find(msg => msg.role === 'user');
+            const title = firstUserMessage ? firstUserMessage.content.substring(0, 30) + '...' : 'New Chat';
+            
+            sessions.push({
+                title,
+                messages: [...allMessages],
+                timestamp: Date.now()
+            });
+            
+            localStorage.setItem(`jochat_chat_sessions_${currentUser.email}`, JSON.stringify(sessions));
+        }
+
+        // Initialize
+        window.onload = function() {
+            loadUserAndSettings();
+            displayMessages();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOchat - Chat</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="../a.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #67e8f9 0%, #a855f7 50%, #ec4899 100%); }
+        .gradient-text { background: linear-gradient(135deg, #67e8f9 0%, #a855f7 50%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .tab-active { background: linear-gradient(135deg, #67e8f9 0%, #a855f7 50%, #ec4899 100%); }
+        .message-user { background: linear-gradient(135deg, #67e8f9 0%, #a855f7 50%, #ec4899 100%); }
+        .message-ai { background: #1f2937; border-left: 4px solid #a855f7; }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(1.1); } }
+        .pulse-animation { animation: pulse 2s infinite; }
+    </style>
+</head>
+<body class="gradient-bg text-white min-h-screen">
+    <div class="h-screen flex">
+        <div class="sidebar bg-gray-800/30 backdrop-blur-xl border-r border-gray-700/50 flex flex-col w-64">
+            <div class="p-6">
+                <div class="flex items-center space-x-4 mb-8">
+                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                        <img src="../a.png" alt="JOchat" class="w-10 h-10">
+                    </div>
+                    <span class="text-lg font-bold gradient-text">JOchat</span>
+                </div>
+                <button onclick="newChat()" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-gray-700/50 hover:bg-gray-600/50 mb-3">
+                    <span class="text-base">➕</span>
+                    <span class="font-medium">New Chat</span>
+                </button>
+                <button onclick="goHome()" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-gray-700/50 hover:bg-gray-600/50">
+                    <span class="text-base">🏠</span>
+                    <span class="font-medium">Home</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex-1 flex flex-col">
+            <div class="bg-gray-800/30 backdrop-blur-xl border-b border-gray-700/50 px-6 py-5">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-300 bg-gray-700/50 px-4 py-2 rounded-full">🚀 JOchat AI</span>
+                </div>
+            </div>
+
+            <div class="bg-gray-800/30 backdrop-blur-xl border-b border-gray-700/50 px-6">
+                <div class="flex space-x-3 py-3">
+                    <button onclick="switchTab('all')" id="tab-all" class="tab-active px-8 py-4 text-sm font-medium rounded-2xl">🌟 All</button>
+                    <button onclick="switchTab('chatgpt')" id="tab-chatgpt" class="px-8 py-4 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-2xl">🧠 GPT</button>
+                    <button onclick="switchTab('gemini')" id="tab-gemini" class="px-8 py-4 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-2xl">⭐ Gemini</button>
+                    <button onclick="switchTab('deepseek')" id="tab-deepseek" class="px-8 py-4 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-2xl">🔬 Deep</button>
+                    <button onclick="switchTab('grok')" id="tab-grok" class="px-8 py-4 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-2xl">⚡ Grok</button>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-hidden">
+                <div id="messages" class="h-full overflow-y-auto px-6 py-8 space-y-8">
+                    <div class="message-ai rounded-2xl p-4 max-w-4xl">
+                        <div class="text-xs text-purple-400 mb-2 font-bold">🚀 JOCHAT SYSTEM</div>
+                        <p class="text-gray-100 text-sm">Welcome to JOchat! Ask anything and get responses from multiple AI models.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-800/30 backdrop-blur-xl border-t border-gray-700/50 px-6 py-8">
+                <div class="flex space-x-6">
+                    <input id="messageInput" type="text" placeholder="🚀 Ask anything..." class="flex-1 px-8 py-5 bg-gray-700/60 border border-gray-600 rounded-3xl text-white placeholder-gray-400" onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button onclick="sendMessage()" class="gradient-bg px-10 py-5 rounded-3xl">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'all';
+        let allMessages = [];
+
+        function goHome() {
+            window.location.href = './index.html';
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('[id^="tab-"]').forEach(t => {
+                t.className = 'px-8 py-4 text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-2xl';
+            });
+            document.getElementById(`tab-${tab}`).className = 'tab-active px-8 py-4 text-sm font-medium rounded-2xl';
+            displayMessages();
+        }
+
+        function displayMessages() {
+            const messagesDiv = document.getElementById('messages');
+            let filteredMessages = allMessages;
+            
+            if (currentTab !== 'all') {
+                filteredMessages = allMessages.filter(msg => 
+                    msg.role === 'user' || msg.model === currentTab
+                );
+            }
+            
+            messagesDiv.innerHTML = `
+                <div class="message-ai rounded-2xl p-4 max-w-4xl">
+                    <div class="text-xs text-purple-400 mb-2 font-bold">🚀 JOCHAT SYSTEM</div>
+                    <p class="text-gray-100 text-sm">Welcome to JOchat! Ask anything and get responses from multiple AI models.</p>
+                </div>
+            `;
+            
+            if (currentTab === 'all') {
+                const groupedMessages = [];
+                let currentGroup = null;
+                
+                filteredMessages.forEach(msg => {
+                    if (msg.role === 'user') {
+                        if (currentGroup) groupedMessages.push(currentGroup);
+                        currentGroup = { user: msg, responses: [] };
+                    } else if (currentGroup) {
+                        currentGroup.responses.push(msg);
+                    }
+                });
+                if (currentGroup) groupedMessages.push(currentGroup);
+                
+                groupedMessages.forEach(group => {
+                    messagesDiv.innerHTML += `
+                        <div class="flex justify-end mb-4">
+                            <div class="message-user rounded-2xl p-4 max-w-xl">
+                                <p class="text-white text-sm">💬 ${group.user.content}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    if (group.responses.length > 0) {
+                        const gridCols = group.responses.length === 1 ? 'grid-cols-1' : group.responses.length === 2 ? 'grid-cols-2' : 'grid-cols-4';
+                        messagesDiv.innerHTML += `<div class="grid ${gridCols} gap-3 mb-6">`;
+                        
+                        const models = ['chatgpt', 'gemini', 'deepseek', 'grok'];
+                        const colors = { 'chatgpt': 'green', 'gemini': 'blue', 'deepseek': 'teal', 'grok': 'pink' };
+                        const icons = { 'chatgpt': '🧠', 'gemini': '⭐', 'deepseek': '🔬', 'grok': '⚡' };
+                        
+                        models.forEach(modelName => {
+                            const response = group.responses.find(r => r.model === modelName);
+                            if (response) {
+                                messagesDiv.innerHTML += `
+                                    <div class="border border-${colors[modelName]}-500/30 rounded-2xl p-3 bg-gray-800/50">
+                                        <div class="text-xs text-${colors[modelName]}-400 mb-2 font-bold border-b border-${colors[modelName]}-500/20 pb-1">
+                                            ${icons[modelName]} ${modelName.toUpperCase()}
+                                        </div>
+                                        <p class="text-gray-100 text-xs" style="font-size: 0.8rem; line-height: 1.4;">${response.content}</p>
+                                    </div>
+                                `;
+                            }
+                        });
+                        
+                        messagesDiv.innerHTML += `</div>`;
+                    }
+                });
+            } else {
+                filteredMessages.forEach(msg => {
+                    if (msg.role === 'user') {
+                        messagesDiv.innerHTML += `
+                            <div class="flex justify-end">
+                                <div class="message-user rounded-2xl p-4 max-w-xl">
+                                    <p class="text-white text-sm">💬 ${msg.content}</p>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        const colors = { 'chatgpt': 'green', 'gemini': 'blue', 'deepseek': 'teal', 'grok': 'pink' };
+                        const icons = { 'chatgpt': '🧠', 'gemini': '⭐', 'deepseek': '🔬', 'grok': '⚡' };
+                        messagesDiv.innerHTML += `
+                            <div class="message-ai rounded-2xl p-4 max-w-4xl border-l-4 border-${colors[msg.model]}-500">
+                                <div class="text-xs text-${colors[msg.model]}-400 mb-2 font-bold">${icons[msg.model]} ${msg.model.toUpperCase()}</div>
+                                <p class="text-gray-100 text-sm">${msg.content}</p>
+                            </div>
+                        `;
+                    }
+                });
+            }
+            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            allMessages.push({
+                role: 'user',
+                content: message,
+                timestamp: Date.now()
+            });
+            
+            input.value = '';
+            displayMessages();
+            
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML += `
+                <div id="loading" class="text-center text-gray-300 mb-4">
+                    <div class="inline-flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-cyan-500 rounded-full pulse-animation"></div>
+                        <div class="w-2 h-2 bg-purple-500 rounded-full pulse-animation" style="animation-delay: 0.2s"></div>
+                        <div class="w-2 h-2 bg-pink-500 rounded-full pulse-animation" style="animation-delay: 0.4s"></div>
+                        <span class="ml-2 text-sm">😊 AI models thinking...</span>
+                    </div>
+                </div>
+            `;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            const models = [
+                {name: 'chatgpt', model: 'openai/gpt-4o-mini'},
+                {name: 'gemini', model: 'google/gemini-flash-1.5'},
+                {name: 'deepseek', model: 'deepseek/deepseek-chat'},
+                {name: 'grok', model: 'x-ai/grok-beta'}
+            ];
+            
+            let modelsToQuery = models;
+            if (currentTab !== 'all') {
+                modelsToQuery = models.filter(model => model.name === currentTab);
+            }
+            
+            for (let i = 0; i < modelsToQuery.length; i++) {
+                setTimeout(async () => {
+                    try {
+                        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+                        const response = await fetch(`${API_BASE}/chat`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                model: modelsToQuery[i].model,
+                                messages: [{role: 'user', content: message}],
+                                max_tokens: 300,
+                                temperature: 0.7
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        }
+                        
+                        const data = await response.json();
+                        
+                        if (data.error) {
+                            throw new Error(data.error.message || 'API Error');
+                        }
+                        
+                        const content = data.choices?.[0]?.message?.content || 'No response received';
+                        
+                        allMessages.push({
+                            role: 'assistant',
+                            model: modelsToQuery[i].name,
+                            content: content,
+                            timestamp: Date.now()
+                        });
+                        
+                        if (i === 0) {
+                            const loading = document.getElementById('loading');
+                            if (loading) loading.remove();
+                        }
+                        
+                        displayMessages();
+                        
+                    } catch (error) {
+                        console.error(`${modelsToQuery[i].name} Error:`, error);
+                        let errorMessage = 'Connection failed';
+                        if (error.message.includes('401')) {
+                            errorMessage = 'Invalid API key';
+                        } else if (error.message.includes('429')) {
+                            errorMessage = 'Rate limited';
+                        } else if (error.message.includes('400')) {
+                            errorMessage = 'Bad request';
+                        }
+                        
+                        allMessages.push({
+                            role: 'assistant',
+                            model: modelsToQuery[i].name,
+                            content: `❌ ${errorMessage}`,
+                            timestamp: Date.now()
+                        });
+                        
+                        if (i === 0) {
+                            const loading = document.getElementById('loading');
+                            if (loading) loading.remove();
+                        }
+                        
+                        displayMessages();
+                    }
+                }, i * 2000);
+            }
+        }
+
+        function newChat() {
+            allMessages = [];
+            displayMessages();
+        }
+
+        window.onload = function() {
+            displayMessages();
+        };
+    </script>
+</body>
+</html>
