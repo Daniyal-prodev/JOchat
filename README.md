@@ -9,8 +9,7 @@ Designed with performance, simplicity, and a clean UI in mind.
 
 - 🔐 **User Authentication** – Secure login and registration system  
 - 💬 **Real-time Messaging** – Instant conversations powered by WebSockets  
-- 👥 **Private & Group Chats** – Chat 1-on-1 or create group conversations  
-- 🖼️ **Media Sharing** – Send images, files, and other attachments  
+- 👥 **Private & Group Chats** – Chat 1-on-1 or create group conversations 
 - 🌓 **Dark Mode** – Smooth theme switching for late-night vibes  
 - 📱 **Responsive Design** – Optimized for desktop, tablet, and mobile  
 - ⚡ **Fast & Scalable** – Built with performance in mind  
@@ -37,10 +36,9 @@ Clone the repository and install dependencies:
 git clone https://github.com/your-username/JOchat.git
 cd JOchat
 
-# Install backend dependencies
-cd server
+# Run the server locally and with proper hosting
 npm install
+npm install -g localtunnel
+node server.js
+lt --port 3000 --subdomain jochat
 
-# Install frontend dependencies
-cd ../client
-npm install
