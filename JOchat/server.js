@@ -151,6 +151,7 @@ app.post('/api/chat-stream', async (req, res) => {
       stream.on('data', (chunk) => {
         setInactivityTimeout();
         const str = chunk.toString('utf8');
+        console.log(JSON.stringify({ type: 'upstream_chunk', idx, len: str.length, head: str.slice(0, 200) }));
         if (str.includes('"error"')) {
           clearTimeout(timeoutId);
           if (idx < candidates.length - 1) {
