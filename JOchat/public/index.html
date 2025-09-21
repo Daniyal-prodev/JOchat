@@ -4,6 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JOchat - Compare AI Models</title>
+    <script>
+      (function() {
+        try {
+          const saved = localStorage.getItem('jochat_settings');
+          const theme = saved ? (JSON.parse(saved).theme || 'dark') : 'dark';
+          document.addEventListener('DOMContentLoaded', function(){
+            if (theme === 'light') {
+              document.body.className = 'bg-gray-100 text-gray-900 min-h-screen light-theme';
+            } else {
+              document.body.className = 'bg-gray-900 text-white min-h-screen';
+            }
+          });
+          if (theme === 'light') {
+            document.documentElement.style.backgroundColor = '#f3f4f6';
+          } else {
+            document.documentElement.style.backgroundColor = '#111827';
+          }
+        } catch (_) {
+          document.addEventListener('DOMContentLoaded', function(){
+            document.body.className = 'bg-gray-900 text-white min-h-screen';
+          });
+        }
+      })();
+    </script>
     <link rel="icon" href="a.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>

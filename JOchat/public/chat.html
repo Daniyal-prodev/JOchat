@@ -4,6 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JOchat - Chat</title>
+    <script>
+      (function() {
+        try {
+          const saved = localStorage.getItem('jochat_settings');
+          const theme = saved ? (JSON.parse(saved).theme || 'dark') : 'dark';
+          document.addEventListener('DOMContentLoaded', function(){
+            if (theme === 'light') {
+              document.body.className = 'bg-gray-100 text-gray-900 min-h-screen light-theme';
+            } else {
+              document.body.className = 'bg-gray-900 text-white min-h-screen';
+            }
+          });
+          if (theme === 'light') {
+            document.documentElement.style.backgroundColor = '#f3f4f6';
+          } else {
+            document.documentElement.style.backgroundColor = '#111827';
+          }
+        } catch (_) {
+          document.addEventListener('DOMContentLoaded', function(){
+            document.body.className = 'bg-gray-900 text-white min-h-screen';
+          });
+        }
+      })();
+    </script>
     <link rel="icon" type="image/png" sizes="32x32" href="a.png">
     <link rel="icon" type="image/png" sizes="16x16" href="a.png">
     <link rel="apple-touch-icon" sizes="180x180" href="a.png">
@@ -673,11 +697,21 @@
 
         function applyTheme() {
             if (settings.theme === 'light') {
-                document.body.className = 'gradient-bg text-gray-900 min-h-screen light-theme';
+                document.body.className = 'bg-gray-100 text-gray-900 min-h-screen light-theme';
             } else {
-                document.body.className = 'gradient-bg text-white min-h-screen';
+                document.body.className = 'bg-gray-900 text-white min-h-screen';
             }
+            applyModelTitleColors();
+
         }
+        function applyModelTitleColors() {
+            const isLight = (settings && settings.theme === 'light') || document.body.className.includes('light-theme');
+            document.querySelectorAll('.model-title').forEach(el => {
+                el.classList.remove('text-white', 'text-gray-900');
+                el.classList.add(isLight ? 'text-gray-900' : 'text-white');
+            });
+        }
+
 
         function goHome() {
             window.location.href = './index.html';
@@ -870,9 +904,9 @@
                 groupedMessages.forEach((group, groupIndex) => {
                     // User message
                     messagesDiv.innerHTML += `
-                        <div class="flex justify-end fade-in-up mb-4" style="animation-delay: ${groupIndex * 0.1}s">
+                        <div class="flex justify-center fade-in-up mb-4" style="animation-delay: ${groupIndex * 0.1}s">
                             <div class="message-user rounded-2xl p-4 w-full break-words shadow-xl">
-                                <p class="text-white leading-relaxed text-sm">💬 ${group.user.content}</p>
+                                <p class="text-white leading-relaxed text-sm text-center">💬 ${group.user.content}</p>
                             </div>
                         </div>
                     `;
@@ -904,9 +938,9 @@
                             if (response) {
                                 messagesDiv.innerHTML += `
                                     <div class="model-card border border-${colors[modelName]}-500/30 rounded-xl sm:rounded-2xl p-2 sm:p-3 glass-effect fade-in-up hover:border-${colors[modelName]}-400/50 transition-all duration-300">
-                                        <div class="text-xs sm:text-xs text-${colors[modelName]}-400 mb-1 sm:mb-2 font-bold uppercase tracking-wide border-b border-${colors[modelName]}-500/20 pb-1 bounce-in flex items-center gap-2">
+                                        <div class="text-xs sm:text-xs mb-1 sm:mb-2 font-bold uppercase tracking-wide border-b border-${colors[modelName]}-500/20 pb-1 bounce-in flex items-center gap-2">
                                             <img src="${MODEL_LOGOS[modelName] || ''}" alt="${MODEL_LABELS[modelName] || modelName}" class="w-4 h-4 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
-                                            <span>${MODEL_LABELS[modelName] || modelName.toUpperCase()}</span>
+                                            <span class="model-title">${MODEL_LABELS[modelName] || modelName.toUpperCase()}</span>
                                         </div>
                                         <div class="h-px bg-gradient-to-r from-${colors[modelName]}-500/50 to-transparent mb-1 sm:mb-2 animated-line"></div>
                                         <p class="text-gray-100 leading-relaxed text-xs sm:text-xs slide-in-up" style="font-size: 0.8rem; line-height: 1.4;">${parseMarkdown(response.content)}</p>
@@ -916,6 +950,7 @@
                         });
                         
                         messagesDiv.innerHTML += `</div>`;
+                        if (typeof applyModelTitleColors === 'function') { applyModelTitleColors(); }
                     }
                 });
             } else {
@@ -1029,15 +1064,16 @@
                 const gridCols = availableResponses === 1 ? 'grid-cols-1' : availableResponses === 2 ? 'grid-cols-2' : availableResponses === 3 ? 'grid-cols-3' : 'grid-cols-4';
                 if (!gridExisting || gridExisting.getAttribute('data-streaming') !== 'true') {
                     messagesDiv.innerHTML += `<div class="grid ${gridCols} gap-2 sm:gap-3 mb-4 sm:mb-6" data-streaming="true"></div>`;
+                    if (typeof applyModelTitleColors === 'function') { applyModelTitleColors(); }
                 }
                 const grid = messagesDiv.querySelector('.grid[data-streaming="true"]');
                 const cardId = `model-card-${modelName}-${Date.now()}`;
                 const card = document.createElement('div');
                 card.className = `model-card border border-${color}-500/30 rounded-xl sm:rounded-2xl p-2 sm:p-3 glass-effect fade-in-up hover:border-${color}-400/50 transition-all duration-300`;
                 card.innerHTML = `
-                    <div class="text-xs sm:text-xs text-${color}-400 mb-1 sm:mb-2 font-bold uppercase tracking-wide border-b border-${color}-500/20 pb-1 bounce-in flex items-center gap-2">
+                    <div class="text-xs sm:text-xs mb-1 sm:mb-2 font-bold uppercase tracking-wide border-b border-${color}-500/20 pb-1 bounce-in flex items-center gap-2">
                         <img src="${MODEL_LOGOS[modelName] || ''}" alt="${MODEL_LABELS[modelName] || modelName}" class="w-4 h-4 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
-                        <span>${MODEL_LABELS[modelName] || modelName.toUpperCase()}</span>
+                        <span class="model-title">${MODEL_LABELS[modelName] || modelName.toUpperCase()}</span>
                     </div>
                     <div class="h-px bg-gradient-to-r from-${color}-500/50 to-transparent mb-1 sm:mb-2 animated-line"></div>
                     <div id="${cardId}-content" class="text-gray-100 leading-relaxed text-sm slide-in-up whitespace-pre-wrap break-words"></div>
