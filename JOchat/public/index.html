@@ -4,7 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JOchat - Compare AI Models</title>
-    <link rel="icon" href="../a.png">
+    <script>
+      (function() {
+        try {
+          const saved = localStorage.getItem('jochat_settings');
+          const theme = saved ? (JSON.parse(saved).theme || 'dark') : 'dark';
+          document.addEventListener('DOMContentLoaded', function(){
+            if (theme === 'light') {
+              document.body.className = 'bg-gray-100 text-gray-900 min-h-screen light-theme';
+            } else {
+              document.body.className = 'bg-gray-900 text-white min-h-screen';
+            }
+          });
+          if (theme === 'light') {
+            document.documentElement.style.backgroundColor = '#f3f4f6';
+          } else {
+            document.documentElement.style.backgroundColor = '#111827';
+          }
+        } catch (_) {
+          document.addEventListener('DOMContentLoaded', function(){
+            document.body.className = 'bg-gray-900 text-white min-h-screen';
+          });
+        }
+      })();
+    </script>
+    <link rel="icon" href="a.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .gradient-bg { background: linear-gradient(135deg, #67e8f9 0%, #a855f7 50%, #ec4899 100%); }
@@ -1051,7 +1075,7 @@
                 {name: 'chatgpt', model: 'openai/gpt-oss-20b:free'},
                 {name: 'gemini', model: 'google/gemini-2.5-flash-image-preview:free'},
                 {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b:free'},
-                {name: 'grok', model: 'x-ai/grok-3-mini'}
+                {name: 'grok', model: 'x-ai/grok-3-mini:free'}
             ];
             
             // Determine which models to query based on current tab
@@ -1061,7 +1085,7 @@
             }
             
             const providerCandidates = {
-                grok: ['x-ai/grok-3-mini', 'x-ai/grok-3', 'meta-llama/llama-3.1-8b-instruct'],
+                grok: ['x-ai/grok-3-mini:free', 'x-ai/grok-3:free', 'meta-llama/llama-3.1-8b-instruct:free'],
                 kimi: ['moonshotai/kimi-k2:free', 'moonshotai/kimi-k2', 'qwen/qwen-2.5-7b-instruct:free']
             };
             for (let i = 0; i < modelsToQuery.length; i++) {
@@ -1076,7 +1100,8 @@
                             const response = await fetch(`${API_BASE}/chat`, {
                                 method: 'POST',
                                 headers: {
-                                    'Content-Type': 'application/json'
+                                    'Content-Type': 'application/json',
+                                    ...(currentUser?.email ? { 'X-User-Email': currentUser.email } : {})
                                 },
                                 body: JSON.stringify({
                                     model: candidates[c],
