@@ -15,11 +15,11 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
 function candidateListFor(model) {
   const m = String(model || '').toLowerCase();
-  if (m.includes('openai')) return ['openai/gpt-5'];
-  if (m.includes('gemini') || m.includes('google')) return ['google/gemini-2.5-flash'];
-  if (m.includes('grok') || m.includes('x-ai')) return ['x-ai/grok-2-mini', 'x-ai/grok-2', 'meta-llama/llama-3.1-8b-instruct'];
-  if (m.includes('qwen')) return ['qwen/qwen2.5-7b-instruct', 'qwen/qwen2.5-14b-instruct', 'qwen/qwen2.5-72b-instruct'];
-  if (m.includes('moonshot') || m.includes('kimi')) return ['moonshotai/moonshot-v1-8k', 'moonshotai/moonshot-v1', 'qwen/qwen2.5-7b-instruct'];
+  if (m.includes('openai')) return ['openai/gpt-oss-20b:free'];
+  if (m.includes('gemini') || m.includes('google')) return ['google/gemini-2.5-flash-image-preview:free'];
+  if (m.includes('grok') || m.includes('x-ai')) return ['x-ai/grok-2-mini:free', 'meta-llama/llama-3.1-8b-instruct:free'];
+  if (m.includes('qwen')) return ['qwen/qwen2.5-7b-instruct:free', 'qwen/qwen2.5-14b-instruct:free', 'qwen/qwen2.5-72b-instruct:free'];
+  if (m.includes('moonshot') || m.includes('kimi')) return ['moonshotai/moonshot-v1-8k:free', 'qwen/qwen2.5-7b-instruct:free'];
   return [model].filter(Boolean);
 }
 

@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JOchat - Chat</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="../a.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="../a.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="../a.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="a.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="a.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="a.png">
     <meta name="theme-color" content="#a855f7">
     <style>
         html { -webkit-text-size-adjust: 100%; }
@@ -530,25 +530,25 @@
                     </button>
                     <button onclick="switchTab('chatgpt')" id="tab-chatgpt" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="https://openai.com/favicon.ico" alt="ChatGPT" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                            <img src="assets/chatgpt.svg" alt="ChatGPT" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             ChatGPT Pro
                         </span>
                     </button>
                     <button onclick="switchTab('gemini')" id="tab-gemini" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="https://gemini.google.com/favicon.ico" alt="Gemini" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                            <img src="assets/gemini.svg" alt="Gemini" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             Gemini Pro
                         </span>
                     </button>
                     <button onclick="switchTab('deepseek')" id="tab-deepseek" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="https://www.deepseek.com/favicon.ico" alt="DeepSeek" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                            <img src="assets/deepseek.svg" alt="DeepSeek" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             DeepSeek Pro
                         </span>
                     </button>
                     <button onclick="switchTab('grok')" id="tab-grok" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="https://x.ai/favicon.ico" alt="Grok" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                            <img src="assets/grok.svg" alt="Grok" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             Grok Pro
                         </span>
                     </button>
@@ -623,12 +623,12 @@
             kimi: 'Kimi Pro'
         };
         const MODEL_LOGOS = {
-            chatgpt: 'https://openai.com/favicon.ico',
-            gemini: 'https://gemini.google.com/favicon.ico',
-            deepseek: 'https://www.deepseek.com/favicon.ico',
-            grok: 'https://x.ai/favicon.ico',
-            qwen: 'https://qwenlm.ai/favicon.ico',
-            kimi: 'https://kimi.moonshot.cn/favicon.ico'
+            chatgpt: 'assets/chatgpt.svg',
+            gemini: 'assets/gemini.svg',
+            deepseek: 'assets/deepseek.svg',
+            grok: 'assets/grok.svg',
+            qwen: 'assets/qwen.svg',
+            kimi: 'assets/kimi.svg'
         };
         // Load user and settings
         function loadUserAndSettings() {
