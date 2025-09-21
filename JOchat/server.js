@@ -10,6 +10,48 @@ const PORT = process.env.PORT || 3000;
 app.use(cors({ origin: true, methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Content-Type'], credentials: false }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+function categorizeViolation(messages = []) {
+  const text = (messages || []).map(m => (m && m.content) || '').join(' ').toLowerCase();
+  const rules = [
+    { cat: 'sexual_content_minors', rx: /\bcsam|\bchild\s*sexual|\bminor\s*sexual|\bunder\s*age\s*sex|\bchildren\s*sex/ },
+    { cat: 'terrorism_violence', rx: /\bterrorism|\bbuild\s*a\s*bomb|\bexplosive\s*recipe|\bbioweapon|\bchemical\s*weapon|\bmake\s*a\s*gun/ },
+    { cat: 'self_harm', rx: /\bsuicide|\bself[-\s]?harm|\bkms\b|\bkill\s*myself|\bhow\s*to\s*cut\s*myself/ },
+    { cat: 'hate', rx: /\bhate\s*speech|\bgenocide|\bethnic\s*cleansing|\bhate\s*crime|\bexterminate\s+(?:a|the)\s+(?:race|religion|group)/ },
+    { cat: 'illegal_drugs', rx: /\billegal\s*drugs\s*(?:manufacture|synthesis|sell|buy)|\bhow\s*to\s*cook\s*meth|\bfentanyl\s*synthesis/ },
+    { cat: 'cybercrime', rx: /\bhacking\s*tutorial|\bexploit\s*zero[-\s]?day|\bbackdoor\s*code|\bcredential\s*stuffing|\bphishing\s*kit|\bdox(?:ing|x)\/?\b/ },
+    { cat: 'medical', rx: /\bdiagnose\s+me|\bmedical\s+diagnosis|\bprescribe\s+medicine|\bwhich\s+drug\s+should\s+i\s+take|\bantibiotic\s+dose/ },
+    { cat: 'legal', rx: /\blegal\s+advice|\bhow\s+to\s+beat\s+a\s+case|\bwrite\s+a\s+contract|\bshould\s+i\s+sue/ },
+    { cat: 'financial', rx: /\bfinancial\s+advice|\bwhich\s+stock\s+to\s+buy|\bguaranteed\s+returns|\bpump\s+and\s+dump/ },
+    { cat: 'sensitive_pii', rx: /\bssn\b|\bsocial\s*security\s*number|\bcredit\s*card\s*(?:number)?|\bcvv\b|\bbank\s*account\s*number|\bpassport\s*number/ }
+  ];
+  for (const r of rules) {
+    if (r.rx.test(text)) return r.cat;
+  }
+  return null;
+}
+
+function refusalMessageFor(category) {
+  if (!category) return null;
+  if (category === 'self_harm') return 'I can’t help with self-harm. If you’re in immediate danger, contact local emergency services. You can reach your local suicide prevention hotline for support.';
+  if (category === 'medical') return 'I can’t provide medical advice. Please consult a qualified healthcare professional for diagnosis or treatment.';
+  if (category === 'legal') return 'I can’t provide legal advice. Please consult a qualified attorney for guidance on legal matters.';
+  if (category === 'financial') return 'I can’t provide financial advice. Consider consulting a licensed financial advisor for personalized guidance.';
+  if (category === 'sensitive_pii') return 'I can’t help request or share highly sensitive personal data such as SSN or credit card numbers.';
+  return 'I can’t assist with this request due to safety and policy reasons.';
+}
+
+function moderationGuard(req, res, next) {
+  const { messages } = req.body || {};
+  const category = categorizeViolation(messages);
+  if (category) {
+    const message = refusalMessageFor(category);
+    const payload = { error: { message, code: 'content_policy_violation', category } };
+    console.warn(JSON.stringify({ type: 'moderation_block', category, route: req.path, ts: Date.now() }));
+    return res.status(400).json(payload);
+  }
+  next();
+}
+
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
@@ -22,6 +64,8 @@ function candidateListFor(model) {
   if (m.includes('moonshot') || m.includes('kimi')) return ['moonshotai/moonshot-v1-8k:free', 'qwen/qwen2.5-7b-instruct:free'];
   return [model].filter(Boolean);
 }
+app.post('/chat', moderationGuard);
+
 
 app.post('/chat', async (req, res) => {
   try {
@@ -43,6 +87,8 @@ app.post('/chat', async (req, res) => {
     res.status(500).json({ error: { message: error.message } });
   }
 });
+
+app.post('/api/chat-stream', moderationGuard);
 
 app.post('/api/chat-stream', async (req, res) => {
   if (!OPENROUTER_API_KEY) {
