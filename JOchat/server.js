@@ -44,7 +44,9 @@ function refusalMessageFor(category) {
 
 function moderationGuard(req, res, next) {
   const ownerEmail = String(req.headers['x-user-email'] || '').toLowerCase().trim();
-  if (ownerEmail === OWNER_EMAIL.toLowerCase()) return next();
+  const isOwner = ownerEmail === OWNER_EMAIL.toLowerCase();
+  console.log(JSON.stringify({ type: 'moderation_check', route: req.path, ownerEmail, isOwner, ts: Date.now() }));
+  if (isOwner) return next();
   const { messages } = req.body || {};
   const category = categorizeViolation(messages);
   if (category) {
@@ -85,8 +87,9 @@ app.post('/chat', async (req, res) => {
       },
       body: JSON.stringify(req.body)
     });
-    const data = await response.json();
-    res.status(response.status).json(data);
+    const text = await response.text();
+    console.log(JSON.stringify({ type: 'upstream_chat_complete', status: response.status, ok: response.ok, len: text?.length || 0, ts: Date.now() }));
+    res.status(response.status).send(text);
   } catch (error) {
     res.status(500).json({ error: { message: error.message } });
   }
@@ -116,6 +119,7 @@ app.post('/api/chat-stream', async (req, res) => {
 
     try {
       const referer = req.headers.origin || (req.headers.host ? `https://${req.headers.host}` : undefined);
+      console.log(JSON.stringify({ type: 'upstream_stream_try', model: tryModel, idx, ts: Date.now() }));
       const upstream = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -135,6 +139,7 @@ app.post('/api/chat-stream', async (req, res) => {
         return res.end();
       }
 
+      console.log(JSON.stringify({ type: 'upstream_stream_open', status: upstream.status, ok: upstream.ok, hasBody: !!upstream.body, idx, ts: Date.now() }));
       const stream = upstream.body;
 
       const setInactivityTimeout = () => {
@@ -162,6 +167,7 @@ app.post('/api/chat-stream', async (req, res) => {
       stream.on('end', () => {
         clearTimeout(timeoutId);
         if (!receivedUseful && idx < candidates.length - 1) {
+          console.warn(JSON.stringify({ type: 'fallback_due_to_no_useful', idx, ts: Date.now() }));
           return tryCandidate(idx + 1);
         }
         res.write('event: done\ndata: [DONE]\n\n');
