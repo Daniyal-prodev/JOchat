@@ -554,37 +554,37 @@
                     </button>
                     <button onclick="switchTab('chatgpt')" id="tab-chatgpt" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="/assets/chatgpt.svg" alt="ChatGPT" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10"/>
+                            <img src="https://chat.openai.com/favicon.ico" alt="ChatGPT" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             ChatGPT Pro
                         </span>
                     </button>
                     <button onclick="switchTab('gemini')" id="tab-gemini" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="/assets/gemini.svg" alt="Gemini" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10"/>
+                            <img src="https://www.gstatic.com/aihub/toggles/gemini.png" alt="Gemini" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             Gemini Pro
                         </span>
                     </button>
                     <button onclick="switchTab('deepseek')" id="tab-deepseek" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="/assets/deepseek.svg" alt="DeepSeek" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10"/>
+                            <img src="https://www.deepseek.com/favicon.ico" alt="DeepSeek" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             DeepSeek Pro
                         </span>
                     </button>
                     <button onclick="switchTab('grok')" id="tab-grok" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="/assets/grok.svg" alt="Grok" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10"/>
+                            <img src="https://x.ai/favicon.ico" alt="Grok" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             Grok Pro
                         </span>
                     </button>
                     <button onclick="switchTab('qwen')" id="tab-qwen" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="/assets/qwen.svg" alt="Qwen" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10"/>
+                            <img src="https://qianwen-res.oss-cn-beijing.aliyuncs.com/qianwen-doc-static/favicon.ico" alt="Qwen" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             Qwen Pro
                         </span>
                     </button>
                     <button onclick="switchTab('kimi')" id="tab-kimi" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="/assets/kimi.svg" alt="Kimi" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10"/>
+                            <img src="https://kimi.moonshot.cn/favicon.ico" alt="Kimi" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             Kimi Pro
                         </span>
                     </button>
@@ -603,12 +603,6 @@
 
             <!-- Input Area -->
             <div class="sticky bottom-0 pb-[env(safe-area-inset-bottom)] bg-gray-800/30 backdrop-blur-xl border-t border-gray-700/50 px-3 sm:px-6 py-4 sm:py-8">
-<div class="flex items-center gap-3 mb-2">
-  <label class="inline-flex items-center gap-2 text-xs text-gray-300">
-    <input id="realtimeToggle" type="checkbox" class="accent-purple-500">
-    Realtime
-  </label>
-</div>
 
                 <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-6">
                     <div class="flex-1">
@@ -642,8 +636,7 @@
             animations: true,
             sounds: false,
             autoScroll: true,
-            fontSize: 'text-base',
-            realtime: false
+            fontSize: 'text-base'
         };
 
         const MODEL_LABELS = {
@@ -655,12 +648,12 @@
             kimi: 'Kimi Pro'
         };
         const MODEL_LOGOS = {
-            chatgpt: '/assets/chatgpt.svg',
-            gemini: '/assets/gemini.svg',
-            deepseek: '/assets/deepseek.svg',
-            grok: '/assets/grok.svg',
-            qwen: '/assets/qwen.svg',
-            kimi: '/assets/kimi.svg'
+            chatgpt: 'https://chat.openai.com/favicon.ico',
+            gemini: 'https://www.gstatic.com/aihub/toggles/gemini.png',
+            deepseek: 'https://www.deepseek.com/favicon.ico',
+            grok: 'https://x.ai/favicon.ico',
+            qwen: 'https://qianwen-res.oss-cn-beijing.aliyuncs.com/qianwen-doc-static/favicon.ico',
+            kimi: 'https://kimi.moonshot.cn/favicon.ico'
         };
         // Load user and settings
         function loadUserAndSettings() {
@@ -679,14 +672,6 @@
                 settings = JSON.parse(savedSettings);
             }
             applyTheme();
-            const rt = document.getElementById('realtimeToggle');
-            if (rt) {
-                rt.checked = !!settings.realtime;
-                rt.addEventListener('change', () => {
-                    settings.realtime = rt.checked;
-                    localStorage.setItem('jochat_settings', JSON.stringify(settings));
-                });
-            }
         }
 
         function updateUI() {
@@ -1174,8 +1159,7 @@
                                 model: m.model,
                                 messages: messagesPayload,
                                 temperature,
-                                max_tokens: maxTokens,
-                                realtime: !!document.getElementById('realtimeToggle')?.checked
+                                max_tokens: maxTokens
                             })
                         });
                         if (!resp.ok || !resp.body) {
@@ -1185,7 +1169,6 @@
                         const reader = resp.body.getReader();
                         const decoder = new TextDecoder('utf-8');
                         let buffer = '';
-                        let sourcesForThis = [];
                         let lastUseful = Date.now();
 
                         const toText = (d) => {
@@ -1195,19 +1178,6 @@
                             if (typeof d === 'object') {
                                 if (typeof d.text === 'string') return d.text;
                                 if (typeof d.content === 'string') return d.content;
-                                if (isSourcesEvent) {
-                                    const dline = lines.find(l => l.startsWith('data:')) || '';
-                                    const dstr = dline.replace(/^data:\s*/, '').trim();
-                                    try {
-                                        const payload = JSON.parse(dstr || '{}');
-                                        sourcesForThis = Array.isArray(payload.sources) ? payload.sources : [];
-                                    } catch {}
-                                    continue;
-                                }
-                                if (isInfoEvent) {
-                                    continue;
-                                }
-
                                 if (Array.isArray(d.content)) return d.content.map(toText).join('');
                             }
                             return '';
@@ -1222,17 +1192,11 @@
                             for (const part of parts) {
                                 const lines = part.split(/\r?\n/);
                                 const isErrorEvent = lines.some(l => l.trim() === 'event: error');
-                                const isInfoEvent = lines.some(l => l.trim() === 'event: info');
-                                const isSourcesEvent = lines.some(l => l.trim() === 'event: sources');
                                 if (isErrorEvent) {
                                     const errLine = lines.find(l => l.startsWith('data:'));
                                     const errStr = (errLine || '').replace(/^data:\s*/, '').trim();
                                     try {
                                         const payload = errStr ? JSON.parse(errStr) : {};
-                        if (Array.isArray(sourcesForThis) && sourcesForThis.length) {
-                            const links = sourcesForThis.map((s, i) => `<a href="${s.url}" target="_blank" rel="noopener" class="text-xs text-blue-400 hover:underline mr-3">[${i+1}] ${s.title || 'Source'}</a>`).join('');
-                            finalEl.insertAdjacentHTML('beforeend', `<div class="mt-2">${links}</div>`);
-                        }
 
                                         throw new Error(payload && payload.error ? payload.error : 'Stream error');
                                     } catch {
