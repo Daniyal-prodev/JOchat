@@ -17,6 +17,11 @@ Setup:
    npm start
 
 3) Open in browser
+Realtime (optional):
+- Set TAVILY_API_KEY in your env to enable a Realtime toggle in the UI.
+- When enabled, the server performs a brief web search and includes summarized context with sources before streaming.
+- Health: GET /api/health => hasSearchKey shows availability.
+
    http://localhost:3000/chat.html
 
 Health check:

@@ -60,6 +60,7 @@ function moderationGuard(req, res, next) {
 
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const TAVILY_API_KEY = process.env.TAVILY_API_KEY;
 
 function candidateListFor(model) {
   const original = String(model || '');
@@ -194,13 +195,53 @@ app.post('/api/chat-stream', async (req, res) => {
     return res.end();
   }
 
-  const { model, messages, temperature, max_tokens } = req.body || {};
+  let { model, messages, temperature, max_tokens, realtime } = req.body || {};
   const candidates = candidateListFor(model);
-  console.log(JSON.stringify({ type: 'candidates', model, candidates, ts: Date.now() }));
+  console.log(JSON.stringify({ type: 'candidates', model, candidates, realtime: !!realtime, ts: Date.now() }));
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
   res.setHeader('Connection', 'keep-alive');
+
+  async function performRetrieval(q) {
+    try {
+      if (!TAVILY_API_KEY || !q) return null;
+      res.write(`event: info\ndata: ${JSON.stringify({ stage: 'retrieval_started' })}\n\n`);
+      const tavResp = await fetch('https://api.tavily.com/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ api_key: TAVILY_API_KEY, query: q, search_depth: 'basic', max_results: 3 })
+      });
+      const tavJson = await tavResp.json().catch(() => ({}));
+      const results = Array.isArray(tavJson.results) ? tavJson.results.slice(0, 3) : [];
+      const sources = results.map((r, i) => ({ title: r.title || `Source ${i + 1}`, url: r.url || r.link || '' }));
+      const context = results.map((r, i) => {
+        const title = r.title || `Source ${i + 1}`;
+        const url = r.url || r.link || '';
+        const snippet = r.content || r.snippet || '';
+        return `${i + 1}) ${title} - ${url}\n${snippet}`;
+      }).join('\n\n');
+      res.write(`event: sources\ndata: ${JSON.stringify({ sources })}\n\n`);
+      res.write(`event: info\ndata: ${JSON.stringify({ stage: 'retrieval_finished', count: sources.length })}\n\n`);
+      return { sources, context };
+    } catch (e) {
+      res.write(`event: info\ndata: ${JSON.stringify({ stage: 'retrieval_skipped' })}\n\n`);
+      return null;
+    }
+  }
+
+  if (realtime) {
+    const lastUserMsg = (messages || []).slice().reverse().find(m => (m && m.role) === 'user');
+    const q = lastUserMsg && lastUserMsg.content ? String(lastUserMsg.content).slice(0, 300) : '';
+    const retrieval = await performRetrieval(q);
+    if (retrieval && retrieval.context) {
+      const sys = {
+        role: 'system',
+        content: `You can use the following recent web context. Cite sources with [n] matching the list.\n\nContext:\n${retrieval.context}`
+      };
+      messages = [sys, ...(messages || [])];
+    }
+  }
 
   async function tryCandidate(idx) {
     const tryModel = candidates[idx];
@@ -296,7 +337,7 @@ app.post('/api/chat-stream', async (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-  res.json({ ok: true, hasKey: !!OPENROUTER_API_KEY });
+  res.json({ ok: true, hasKey: !!OPENROUTER_API_KEY, hasSearchKey: !!TAVILY_API_KEY });
 });
 
 app.get('/chat.html', (req, res) => {
