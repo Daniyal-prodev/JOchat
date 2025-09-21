@@ -1047,12 +1047,12 @@
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
             const models = [
-                {name: 'chatgpt', model: 'openai/gpt-oss-20b:free'},
-                {name: 'gemini', model: 'google/gemini-2.0-flash:free'},
-                {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b:free'},
-                {name: 'grok', model: 'x-ai/grok-2-mini:free'},
-                {name: 'qwen', model: 'qwen/qwen-2.5-7b-instruct:free'},
-                {name: 'kimi', model: 'moonshotai/kimi-k2:free'}
+                {name: 'chatgpt', model: 'openai/gpt-4o-mini'},
+                {name: 'gemini', model: 'google/gemini-1.5-flash'},
+                {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b'},
+                {name: 'grok', model: 'x-ai/grok-2-mini'},
+                {name: 'qwen', model: 'qwen/qwen-2.5-7b-instruct'},
+                {name: 'kimi', model: 'moonshotai/kimi-k2'}
             ];
 
             let modelsToQuery = currentTab === 'all' ? models : models.filter(m => m.name === currentTab);
@@ -1304,12 +1304,12 @@
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
             
             const models = [
-                {name: 'chatgpt', model: 'openai/gpt-oss-20b:free'},
-                {name: 'gemini', model: 'google/gemini-2.0-flash:free'},
-                {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b:free'},
-                {name: 'grok', model: 'x-ai/grok-2-mini:free'},
-                {name: 'qwen', model: 'qwen/qwen-2.5-7b-instruct:free'},
-                {name: 'kimi', model: 'moonshotai/kimi-k2:free'}
+                {name: 'chatgpt', model: 'openai/gpt-4o-mini'},
+                {name: 'gemini', model: 'google/gemini-1.5-flash'},
+                {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b'},
+                {name: 'grok', model: 'x-ai/grok-2-mini'},
+                {name: 'qwen', model: 'qwen/qwen-2.5-7b-instruct'},
+                {name: 'kimi', model: 'moonshotai/kimi-k2'}
             ];
             
             let modelsToQuery = models;

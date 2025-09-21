@@ -64,80 +64,100 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 function candidateListFor(model) {
   const original = String(model || '');
   const m = original.toLowerCase();
+  const preferPaid = !!OPENROUTER_API_KEY; // prefer non-free when a key is present
 
   if (original.includes('/') && original.includes(':')) {
     if (m.startsWith('google/') || m.includes('gemini')) {
       return [
         original,
-        'google/gemini-1.5-flash:free',
-        'deepseek/deepseek-r1-distill-llama-70b:free',
-        'qwen/qwen-2.5-14b-instruct:free',
-        'qwen/qwen-2.5-72b-instruct:free',
-        'openai/gpt-oss-20b:free'
+        preferPaid ? 'google/gemini-1.5-flash' : 'google/gemini-1.5-flash:free',
+        preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free',
+        preferPaid ? 'qwen/qwen-2.5-14b-instruct' : 'qwen/qwen-2.5-14b-instruct:free',
+        preferPaid ? 'qwen/qwen-2.5-72b-instruct' : 'qwen/qwen-2.5-72b-instruct:free',
+        preferPaid ? 'openai/gpt-4o-mini' : 'openai/gpt-oss-20b:free'
       ];
     }
     if (m.startsWith('deepseek/')) {
       return [
         original,
-        'qwen/qwen-2.5-14b-instruct:free',
-        'qwen/qwen-2.5-72b-instruct:free',
-        'openai/gpt-oss-20b:free'
+        preferPaid ? 'qwen/qwen-2.5-14b-instruct' : 'qwen/qwen-2.5-14b-instruct:free',
+        preferPaid ? 'qwen/qwen-2.5-72b-instruct' : 'qwen/qwen-2.5-72b-instruct:free',
+        preferPaid ? 'openai/gpt-4o-mini' : 'openai/gpt-oss-20b:free'
       ];
     }
     if (m.startsWith('openai/')) {
       return [
         original,
-        'qwen/qwen-2.5-14b-instruct:free',
-        'qwen/qwen-2.5-72b-instruct:free',
-        'deepseek/deepseek-r1-distill-llama-70b:free'
+        preferPaid ? 'qwen/qwen-2.5-14b-instruct' : 'qwen/qwen-2.5-14b-instruct:free',
+        preferPaid ? 'qwen/qwen-2.5-72b-instruct' : 'qwen/qwen-2.5-72b-instruct:free',
+        preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free'
       ];
     }
     if (m.startsWith('x-ai/')) {
       return [
         original,
-        'deepseek/deepseek-r1-distill-llama-70b:free',
-        'qwen/qwen-2.5-14b-instruct:free',
-        'qwen/qwen-2.5-72b-instruct:free'
+        preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free',
+        preferPaid ? 'qwen/qwen-2.5-14b-instruct' : 'qwen/qwen-2.5-14b-instruct:free',
+        preferPaid ? 'qwen/qwen-2.5-72b-instruct' : 'qwen/qwen-2.5-72b-instruct:free'
       ];
     }
     if (m.startsWith('qwen/')) {
       return [
         original,
-        'qwen/qwen-2.5-14b-instruct:free',
-        'qwen/qwen-2.5-72b-instruct:free',
-        'deepseek/deepseek-r1-distill-llama-70b:free'
+        preferPaid ? 'qwen/qwen-2.5-14b-instruct' : 'qwen/qwen-2.5-14b-instruct:free',
+        preferPaid ? 'qwen/qwen-2.5-72b-instruct' : 'qwen/qwen-2.5-72b-instruct:free',
+        preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free'
       ];
     }
     return [original];
   }
 
-  if (m.includes('openai')) return ['openai/gpt-oss-20b:free', 'meta-llama/llama-3.1-8b-instruct:free', 'mistralai/mistral-7b-instruct:free'];
+  if (m.includes('openai')) return [
+    preferPaid ? 'openai/gpt-4o-mini' : 'openai/gpt-oss-20b:free',
+    preferPaid ? 'meta-llama/llama-3.1-8b-instruct' : 'meta-llama/llama-3.1-8b-instruct:free',
+    preferPaid ? 'mistralai/mistral-7b-instruct' : 'mistralai/mistral-7b-instruct:free'
+  ];
 
   if (m.includes('gemini') || m.includes('google')) {
     return [
-      'google/gemini-2.0-flash:free',
-      'google/gemini-1.5-flash:free',
-      'deepseek/deepseek-r1-distill-llama-70b:free',
-      'qwen/qwen-2.5-7b-instruct:free',
-      'meta-llama/llama-3.1-8b-instruct:free',
-      'mistralai/mistral-7b-instruct:free',
-      'openai/gpt-oss-20b:free'
+      preferPaid ? 'google/gemini-1.5-flash' : 'google/gemini-2.0-flash:free',
+      preferPaid ? 'google/gemini-2.0-flash' : 'google/gemini-1.5-flash:free',
+      preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free',
+      preferPaid ? 'qwen/qwen-2.5-7b-instruct' : 'qwen/qwen-2.5-7b-instruct:free',
+      preferPaid ? 'meta-llama/llama-3.1-8b-instruct' : 'meta-llama/llama-3.1-8b-instruct:free',
+      preferPaid ? 'mistralai/mistral-7b-instruct' : 'mistralai/mistral-7b-instruct:free',
+      preferPaid ? 'openai/gpt-4o-mini' : 'openai/gpt-oss-20b:free'
     ];
   }
 
   if (m.includes('grok') || m.includes('x-ai')) {
     return [
-      'x-ai/grok-2-mini:free',
-      'deepseek/deepseek-r1-distill-llama-70b:free',
-      'qwen/qwen-2.5-7b-instruct:free',
-      'meta-llama/llama-3.1-8b-instruct:free',
-      'mistralai/mistral-7b-instruct:free'
+      preferPaid ? 'x-ai/grok-2-mini' : 'x-ai/grok-2-mini:free',
+      preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free',
+      preferPaid ? 'qwen/qwen-2.5-7b-instruct' : 'qwen/qwen-2.5-7b-instruct:free',
+      preferPaid ? 'meta-llama/llama-3.1-8b-instruct' : 'meta-llama/llama-3.1-8b-instruct:free',
+      preferPaid ? 'mistralai/mistral-7b-instruct' : 'mistralai/mistral-7b-instruct:free'
     ];
   }
 
-  if (m.includes('qwen')) return ['qwen/qwen-2.5-7b-instruct:free', 'qwen/qwen-2.5-14b-instruct:free', 'qwen/qwen-2.5-72b-instruct:free', 'meta-llama/llama-3.1-8b-instruct:free', 'mistralai/mistral-7b-instruct:free'];
-  if (m.includes('moonshot') || m.includes('kimi')) return ['moonshotai/kimi-k2:free', 'qwen/qwen-2.5-7b-instruct:free', 'meta-llama/llama-3.1-8b-instruct:free', 'mistralai/mistral-7b-instruct:free'];
-  if (m.includes('deepseek')) return ['deepseek/deepseek-r1-distill-llama-70b:free', 'meta-llama/llama-3.1-8b-instruct:free', 'mistralai/mistral-7b-instruct:free'];
+  if (m.includes('qwen')) return [
+    preferPaid ? 'qwen/qwen-2.5-7b-instruct' : 'qwen/qwen-2.5-7b-instruct:free',
+    preferPaid ? 'qwen/qwen-2.5-14b-instruct' : 'qwen/qwen-2.5-14b-instruct:free',
+    preferPaid ? 'qwen/qwen-2.5-72b-instruct' : 'qwen/qwen-2.5-72b-instruct:free',
+    preferPaid ? 'meta-llama/llama-3.1-8b-instruct' : 'meta-llama/llama-3.1-8b-instruct:free',
+    preferPaid ? 'mistralai/mistral-7b-instruct' : 'mistralai/mistral-7b-instruct:free'
+  ];
+  if (m.includes('moonshot') || m.includes('kimi')) return [
+    preferPaid ? 'moonshotai/kimi-k2' : 'moonshotai/kimi-k2:free',
+    preferPaid ? 'qwen/qwen-2.5-7b-instruct' : 'qwen/qwen-2.5-7b-instruct:free',
+    preferPaid ? 'meta-llama/llama-3.1-8b-instruct' : 'meta-llama/llama-3.1-8b-instruct:free',
+    preferPaid ? 'mistralai/mistral-7b-instruct' : 'mistralai/mistral-7b-instruct:free'
+  ];
+  if (m.includes('deepseek')) return [
+    preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free',
+    preferPaid ? 'meta-llama/llama-3.1-8b-instruct' : 'meta-llama/llama-3.1-8b-instruct:free',
+    preferPaid ? 'mistralai/mistral-7b-instruct' : 'mistralai/mistral-7b-instruct:free'
+  ];
   return [original].filter(Boolean);
 }
 app.post('/chat', moderationGuard);
