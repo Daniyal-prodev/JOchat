@@ -1186,10 +1186,10 @@
                             const { value, done } = await reader.read();
                             if (done) break;
                             buffer += decoder.decode(value, { stream: true });
-                            const parts = buffer.split(/\\r?\\n\\r?\\n/);
+                            const parts = buffer.split(/\r?\n\r?\n/);
                             buffer = parts.pop() || '';
                             for (const part of parts) {
-                                const lines = part.split(/\\r?\\n/);
+                                const lines = part.split(/\r?\n/);
                                 const dataLine = lines.find(l => l.startsWith('data:'));
                                 if (!dataLine) continue;
                                 const dataStr = dataLine.replace(/^data:\\s*/, '').trim();
