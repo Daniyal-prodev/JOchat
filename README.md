@@ -38,7 +38,5 @@ cd JOchat
 
 # Run the server locally and with proper hosting
 npm install
-npm install -g localtunnel
 node server.js
-lt --port 3000 --subdomain jochat
 
