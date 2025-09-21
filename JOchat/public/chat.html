@@ -1310,8 +1310,8 @@
             
             const providerCandidates = {
                 grok: ['x-ai/grok-2-mini:free', 'x-ai/grok-2:free', 'meta-llama/llama-3.1-8b-instruct:free'],
-                qwen: ['qwen/qwen2.5-7b-instruct:free', 'qwen/qwen2.5-14b-instruct:free', 'qwen/qwen2.5-72b-instruct:free'],
-                kimi: ['moonshotai/moonshot-v1-8k:free', 'moonshotai/moonshot-v1:free', 'qwen/qwen2.5-7b-instruct:free']
+                qwen: ['qwen/qwen-2.5-7b-instruct:free', 'qwen/qwen-2.5-14b-instruct:free', 'qwen/qwen-2.5-72b-instruct:free'],
+                kimi: ['moonshotai/kimi-k2:free', 'moonshotai/kimi-k2', 'qwen/qwen-2.5-7b-instruct:free']
             };
             for (let i = 0; i < modelsToQuery.length; i++) {
                 setTimeout(async () => {
