@@ -62,13 +62,103 @@ function moderationGuard(req, res, next) {
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
 function candidateListFor(model) {
-  const m = String(model || '').toLowerCase();
-  if (m.includes('openai')) return ['openai/gpt-oss-20b:free'];
-  if (m.includes('gemini') || m.includes('google')) return ['google/gemini-2.5-flash-image-preview:free'];
-  if (m.includes('grok') || m.includes('x-ai')) return ['x-ai/grok-2-mini:free', 'meta-llama/llama-3.1-8b-instruct:free'];
-  if (m.includes('qwen')) return ['qwen/qwen-2.5-7b-instruct:free', 'qwen/qwen-2.5-14b-instruct:free', 'qwen/qwen-2.5-72b-instruct:free'];
-  if (m.includes('moonshot') || m.includes('kimi')) return ['moonshotai/kimi-k2:free', 'qwen/qwen-2.5-7b-instruct:free'];
-  return [model].filter(Boolean);
+  const original = String(model || '');
+  const m = original.toLowerCase();
+  const preferPaid = !!OPENROUTER_API_KEY; // prefer non-free when a key is present
+
+  if (original.includes('/') && original.includes(':')) {
+    if (m.startsWith('google/') || m.includes('gemini')) {
+      return [
+        original,
+        preferPaid ? 'google/gemini-1.5-flash' : 'google/gemini-1.5-flash:free',
+        preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free',
+        preferPaid ? 'qwen/qwen-2.5-14b-instruct' : 'qwen/qwen-2.5-14b-instruct:free',
+        preferPaid ? 'qwen/qwen-2.5-72b-instruct' : 'qwen/qwen-2.5-72b-instruct:free',
+        preferPaid ? 'openai/gpt-4o-mini' : 'openai/gpt-oss-20b:free'
+      ];
+    }
+    if (m.startsWith('deepseek/')) {
+      return [
+        original,
+        preferPaid ? 'qwen/qwen-2.5-14b-instruct' : 'qwen/qwen-2.5-14b-instruct:free',
+        preferPaid ? 'qwen/qwen-2.5-72b-instruct' : 'qwen/qwen-2.5-72b-instruct:free',
+        preferPaid ? 'openai/gpt-4o-mini' : 'openai/gpt-oss-20b:free'
+      ];
+    }
+    if (m.startsWith('openai/')) {
+      return [
+        original,
+        preferPaid ? 'qwen/qwen-2.5-14b-instruct' : 'qwen/qwen-2.5-14b-instruct:free',
+        preferPaid ? 'qwen/qwen-2.5-72b-instruct' : 'qwen/qwen-2.5-72b-instruct:free',
+        preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free'
+      ];
+    }
+    if (m.startsWith('x-ai/')) {
+      return [
+        original,
+        preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free',
+        preferPaid ? 'qwen/qwen-2.5-14b-instruct' : 'qwen/qwen-2.5-14b-instruct:free',
+        preferPaid ? 'qwen/qwen-2.5-72b-instruct' : 'qwen/qwen-2.5-72b-instruct:free'
+      ];
+    }
+    if (m.startsWith('qwen/')) {
+      return [
+        original,
+        preferPaid ? 'qwen/qwen-2.5-14b-instruct' : 'qwen/qwen-2.5-14b-instruct:free',
+        preferPaid ? 'qwen/qwen-2.5-72b-instruct' : 'qwen/qwen-2.5-72b-instruct:free',
+        preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free'
+      ];
+    }
+    return [original];
+  }
+
+  if (m.includes('openai')) return [
+    preferPaid ? 'openai/gpt-4o-mini' : 'openai/gpt-oss-20b:free',
+    preferPaid ? 'meta-llama/llama-3.1-8b-instruct' : 'meta-llama/llama-3.1-8b-instruct:free',
+    preferPaid ? 'mistralai/mistral-7b-instruct' : 'mistralai/mistral-7b-instruct:free'
+  ];
+
+  if (m.includes('gemini') || m.includes('google')) {
+    return [
+      preferPaid ? 'google/gemini-1.5-flash' : 'google/gemini-2.0-flash:free',
+      preferPaid ? 'google/gemini-2.0-flash' : 'google/gemini-1.5-flash:free',
+      preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free',
+      preferPaid ? 'qwen/qwen-2.5-7b-instruct' : 'qwen/qwen-2.5-7b-instruct:free',
+      preferPaid ? 'meta-llama/llama-3.1-8b-instruct' : 'meta-llama/llama-3.1-8b-instruct:free',
+      preferPaid ? 'mistralai/mistral-7b-instruct' : 'mistralai/mistral-7b-instruct:free',
+      preferPaid ? 'openai/gpt-4o-mini' : 'openai/gpt-oss-20b:free'
+    ];
+  }
+
+  if (m.includes('grok') || m.includes('x-ai')) {
+    return [
+      preferPaid ? 'x-ai/grok-2-mini' : 'x-ai/grok-2-mini:free',
+      preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free',
+      preferPaid ? 'qwen/qwen-2.5-7b-instruct' : 'qwen/qwen-2.5-7b-instruct:free',
+      preferPaid ? 'meta-llama/llama-3.1-8b-instruct' : 'meta-llama/llama-3.1-8b-instruct:free',
+      preferPaid ? 'mistralai/mistral-7b-instruct' : 'mistralai/mistral-7b-instruct:free'
+    ];
+  }
+
+  if (m.includes('qwen')) return [
+    preferPaid ? 'qwen/qwen-2.5-7b-instruct' : 'qwen/qwen-2.5-7b-instruct:free',
+    preferPaid ? 'qwen/qwen-2.5-14b-instruct' : 'qwen/qwen-2.5-14b-instruct:free',
+    preferPaid ? 'qwen/qwen-2.5-72b-instruct' : 'qwen/qwen-2.5-72b-instruct:free',
+    preferPaid ? 'meta-llama/llama-3.1-8b-instruct' : 'meta-llama/llama-3.1-8b-instruct:free',
+    preferPaid ? 'mistralai/mistral-7b-instruct' : 'mistralai/mistral-7b-instruct:free'
+  ];
+  if (m.includes('moonshot') || m.includes('kimi')) return [
+    preferPaid ? 'moonshotai/kimi-k2' : 'moonshotai/kimi-k2:free',
+    preferPaid ? 'qwen/qwen-2.5-7b-instruct' : 'qwen/qwen-2.5-7b-instruct:free',
+    preferPaid ? 'meta-llama/llama-3.1-8b-instruct' : 'meta-llama/llama-3.1-8b-instruct:free',
+    preferPaid ? 'mistralai/mistral-7b-instruct' : 'mistralai/mistral-7b-instruct:free'
+  ];
+  if (m.includes('deepseek')) return [
+    preferPaid ? 'deepseek/deepseek-r1-distill-llama-70b' : 'deepseek/deepseek-r1-distill-llama-70b:free',
+    preferPaid ? 'meta-llama/llama-3.1-8b-instruct' : 'meta-llama/llama-3.1-8b-instruct:free',
+    preferPaid ? 'mistralai/mistral-7b-instruct' : 'mistralai/mistral-7b-instruct:free'
+  ];
+  return [original].filter(Boolean);
 }
 app.post('/chat', moderationGuard);
 
@@ -104,8 +194,9 @@ app.post('/api/chat-stream', async (req, res) => {
     return res.end();
   }
 
-  const { model, messages, temperature, max_tokens } = req.body || {};
+  let { model, messages, temperature, max_tokens } = req.body || {};
   const candidates = candidateListFor(model);
+  console.log(JSON.stringify({ type: 'candidates', model, candidates, ts: Date.now() }));
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
@@ -135,21 +226,33 @@ app.post('/api/chat-stream', async (req, res) => {
 
       if (!upstream.ok || !upstream.body) {
         if (idx < candidates.length - 1) return tryCandidate(idx + 1);
-        res.write(`event: error\ndata: ${JSON.stringify({ error: 'Service temporarily unavailable', status: upstream.status })}\n\n`);
+        res.write(`event: error\ndata: ${JSON.stringify({ error: 'Service temporarily unavailable', status: upstream.status, model: tryModel })}\n\n`);
         return res.end();
       }
 
       console.log(JSON.stringify({ type: 'upstream_stream_open', status: upstream.status, ok: upstream.ok, hasBody: !!upstream.body, idx, ts: Date.now() }));
       const stream = upstream.body;
 
-      const setInactivityTimeout = () => {
+      controller.signal.addEventListener('abort', () => {
+        if (idx < candidates.length - 1) return;
+        try {
+          res.write(`event: error\ndata: ${JSON.stringify({ error: 'Timeout waiting for response', model: tryModel })}\n\n`);
+        } finally {
+          res.end();
+        }
+      });
+
+      let connectTimer;
+      const resetInactivity = () => {
+        clearTimeout(connectTimer);
         clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => controller.abort(), 10000);
+        timeoutId = setTimeout(() => controller.abort(), 45000);
       };
-      setInactivityTimeout();
+      connectTimer = setTimeout(() => controller.abort(), 20000);
+      resetInactivity();
 
       stream.on('data', (chunk) => {
-        setInactivityTimeout();
+        resetInactivity();
         const str = chunk.toString('utf8');
         console.log(JSON.stringify({ type: 'upstream_chunk', idx, len: str.length, head: str.slice(0, 200) }));
         if (str.includes('"error"')) {
@@ -158,7 +261,7 @@ app.post('/api/chat-stream', async (req, res) => {
             controller.abort();
             return tryCandidate(idx + 1);
           }
-          res.write(`event: error\ndata: ${JSON.stringify({ error: 'Upstream error' })}\n\n`);
+          res.write(`event: error\ndata: ${JSON.stringify({ error: 'Upstream error', model: tryModel })}\n\n`);
           return res.end();
         }
         if (/\bdata:\s*(?!\[DONE\])/.test(str)) receivedUseful = true;
@@ -186,9 +289,14 @@ app.post('/api/chat-stream', async (req, res) => {
       res.write(`event: error\ndata: ${JSON.stringify({ error: 'Network error' })}\n\n`);
       res.end();
     }
-  }
+}
+
 
   tryCandidate(0);
+});
+
+app.get('/api/health', (req, res) => {
+  res.json({ ok: true, hasKey: !!OPENROUTER_API_KEY });
 });
 
 app.get('/chat.html', (req, res) => {

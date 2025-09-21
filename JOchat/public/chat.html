@@ -554,13 +554,13 @@
                     </button>
                     <button onclick="switchTab('chatgpt')" id="tab-chatgpt" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="https://openai.com/favicon.ico" alt="ChatGPT" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                            <img src="https://chat.openai.com/favicon.ico" alt="ChatGPT" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             ChatGPT Pro
                         </span>
                     </button>
                     <button onclick="switchTab('gemini')" id="tab-gemini" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="https://gemini.google.com/favicon.ico" alt="Gemini" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                            <img src="https://www.gstatic.com/aihub/toggles/gemini.png" alt="Gemini" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             Gemini Pro
                         </span>
                     </button>
@@ -578,7 +578,7 @@
                     </button>
                     <button onclick="switchTab('qwen')" id="tab-qwen" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="https://qwenlm.ai/favicon.ico" alt="Qwen" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.onerror=null; this.src='https://qwenlm.ai/favicon-32x32.png';"/>
+                            <img src="https://qianwen-res.oss-cn-beijing.aliyuncs.com/qianwen-doc-static/favicon.ico" alt="Qwen" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             Qwen Pro
                         </span>
                     </button>
@@ -603,6 +603,7 @@
 
             <!-- Input Area -->
             <div class="sticky bottom-0 pb-[env(safe-area-inset-bottom)] bg-gray-800/30 backdrop-blur-xl border-t border-gray-700/50 px-3 sm:px-6 py-4 sm:py-8">
+
                 <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-6">
                     <div class="flex-1">
                         <input 
@@ -647,11 +648,11 @@
             kimi: 'Kimi Pro'
         };
         const MODEL_LOGOS = {
-            chatgpt: 'https://openai.com/favicon.ico',
-            gemini: 'https://gemini.google.com/favicon.ico',
+            chatgpt: 'https://chat.openai.com/favicon.ico',
+            gemini: 'https://www.gstatic.com/aihub/toggles/gemini.png',
             deepseek: 'https://www.deepseek.com/favicon.ico',
             grok: 'https://x.ai/favicon.ico',
-            qwen: 'https://qwenlm.ai/favicon.ico',
+            qwen: 'https://qianwen-res.oss-cn-beijing.aliyuncs.com/qianwen-doc-static/favicon.ico',
             kimi: 'https://kimi.moonshot.cn/favicon.ico'
         };
         // Load user and settings
@@ -669,8 +670,8 @@
             const savedSettings = localStorage.getItem('jochat_settings');
             if (savedSettings) {
                 settings = JSON.parse(savedSettings);
-                applyTheme();
             }
+            applyTheme();
         }
 
         function updateUI() {
@@ -1047,12 +1048,12 @@
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
             const models = [
-                {name: 'chatgpt', model: 'openai/gpt-oss-20b:free'},
-                {name: 'gemini', model: 'google/gemini-2.5-flash-image-preview:free'},
-                {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b:free'},
-                {name: 'grok', model: 'x-ai/grok-2-mini:free'},
-                {name: 'qwen', model: 'qwen/qwen-2.5-7b-instruct:free'},
-                {name: 'kimi', model: 'moonshotai/kimi-k2:free'}
+                {name: 'chatgpt', model: 'openai/gpt-4o-mini'},
+                {name: 'gemini', model: 'google/gemini-1.5-flash'},
+                {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b'},
+                {name: 'grok', model: 'x-ai/grok-2-mini'},
+                {name: 'qwen', model: 'qwen/qwen-2.5-7b-instruct'},
+                {name: 'kimi', model: 'moonshotai/kimi-k2'}
             ];
 
             let modelsToQuery = currentTab === 'all' ? models : models.filter(m => m.name === currentTab);
@@ -1190,6 +1191,18 @@
                             buffer = parts.pop() || '';
                             for (const part of parts) {
                                 const lines = part.split(/\r?\n/);
+                                const isErrorEvent = lines.some(l => l.trim() === 'event: error');
+                                if (isErrorEvent) {
+                                    const errLine = lines.find(l => l.startsWith('data:'));
+                                    const errStr = (errLine || '').replace(/^data:\s*/, '').trim();
+                                    try {
+                                        const payload = errStr ? JSON.parse(errStr) : {};
+
+                                        throw new Error(payload && payload.error ? payload.error : 'Stream error');
+                                    } catch {
+                                        throw new Error('Stream error');
+                                    }
+                                }
                                 const dataLine = lines.find(l => l.startsWith('data:'));
                                 if (!dataLine) continue;
                                 const dataStr = dataLine.replace(/^data:\s*/, '').trim();
@@ -1205,7 +1218,6 @@
                                     contentEl.textContent = accumulated;
                                     console.log('JOchat stream chunk', modelName, chunk.length);
                                 } catch (_) {
-                                    /* tolerate parse errors */
                                 }
                             }
                         }
@@ -1294,12 +1306,12 @@
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
             
             const models = [
-                {name: 'chatgpt', model: 'openai/gpt-oss-20b:free'},
-                {name: 'gemini', model: 'google/gemini-2.5-flash-image-preview:free'},
-                {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b:free'},
-                {name: 'grok', model: 'x-ai/grok-2-mini:free'},
-                {name: 'qwen', model: 'qwen/qwen-2.5-7b-instruct:free'},
-                {name: 'kimi', model: 'moonshotai/kimi-k2:free'}
+                {name: 'chatgpt', model: 'openai/gpt-4o-mini'},
+                {name: 'gemini', model: 'google/gemini-1.5-flash'},
+                {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b'},
+                {name: 'grok', model: 'x-ai/grok-2-mini'},
+                {name: 'qwen', model: 'qwen/qwen-2.5-7b-instruct'},
+                {name: 'kimi', model: 'moonshotai/kimi-k2'}
             ];
             
             let modelsToQuery = models;
