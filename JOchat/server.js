@@ -71,8 +71,41 @@ function candidateListFor(model) {
         original,
         'google/gemini-1.5-flash:free',
         'deepseek/deepseek-r1-distill-llama-70b:free',
-        'qwen/qwen-2.5-7b-instruct:free',
+        'qwen/qwen-2.5-14b-instruct:free',
+        'qwen/qwen-2.5-72b-instruct:free',
         'openai/gpt-oss-20b:free'
+      ];
+    }
+    if (m.startsWith('deepseek/')) {
+      return [
+        original,
+        'qwen/qwen-2.5-14b-instruct:free',
+        'qwen/qwen-2.5-72b-instruct:free',
+        'openai/gpt-oss-20b:free'
+      ];
+    }
+    if (m.startsWith('openai/')) {
+      return [
+        original,
+        'qwen/qwen-2.5-14b-instruct:free',
+        'qwen/qwen-2.5-72b-instruct:free',
+        'deepseek/deepseek-r1-distill-llama-70b:free'
+      ];
+    }
+    if (m.startsWith('x-ai/')) {
+      return [
+        original,
+        'deepseek/deepseek-r1-distill-llama-70b:free',
+        'qwen/qwen-2.5-14b-instruct:free',
+        'qwen/qwen-2.5-72b-instruct:free'
+      ];
+    }
+    if (m.startsWith('qwen/')) {
+      return [
+        original,
+        'qwen/qwen-2.5-14b-instruct:free',
+        'qwen/qwen-2.5-72b-instruct:free',
+        'deepseek/deepseek-r1-distill-llama-70b:free'
       ];
     }
     return [original];
