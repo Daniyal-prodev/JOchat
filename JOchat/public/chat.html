@@ -1201,7 +1201,7 @@
                                     let chunk = toText(delta);
                                     if (!chunk) continue;
                                     lastUseful = Date.now();
-                                    accumulated += chunk.replace(/\\[object Object\\]/g, '');
+                                    accumulated += chunk.replace(/\[object Object\]/g, '');
                                     contentEl.textContent = accumulated;
                                     console.log('JOchat stream chunk', modelName, chunk.length);
                                 } catch (_) {
