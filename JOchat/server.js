@@ -66,8 +66,8 @@ function candidateListFor(model) {
   if (m.includes('openai')) return ['openai/gpt-oss-20b:free'];
   if (m.includes('gemini') || m.includes('google')) return ['google/gemini-2.5-flash-image-preview:free'];
   if (m.includes('grok') || m.includes('x-ai')) return ['x-ai/grok-2-mini:free', 'meta-llama/llama-3.1-8b-instruct:free'];
-  if (m.includes('qwen')) return ['qwen/qwen2.5-7b-instruct:free', 'qwen/qwen2.5-14b-instruct:free', 'qwen/qwen2.5-72b-instruct:free'];
-  if (m.includes('moonshot') || m.includes('kimi')) return ['moonshotai/moonshot-v1-8k:free', 'qwen/qwen2.5-7b-instruct:free'];
+  if (m.includes('qwen')) return ['qwen/qwen-2.5-7b-instruct:free', 'qwen/qwen-2.5-14b-instruct:free', 'qwen/qwen-2.5-72b-instruct:free'];
+  if (m.includes('moonshot') || m.includes('kimi')) return ['moonshotai/kimi-k2:free', 'qwen/qwen-2.5-7b-instruct:free'];
   return [model].filter(Boolean);
 }
 app.post('/chat', moderationGuard);

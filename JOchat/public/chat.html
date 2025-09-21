@@ -1051,8 +1051,8 @@
                 {name: 'gemini', model: 'google/gemini-2.5-flash-image-preview:free'},
                 {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b:free'},
                 {name: 'grok', model: 'x-ai/grok-2-mini:free'},
-                {name: 'qwen', model: 'qwen/qwen2.5-7b-instruct:free'},
-                {name: 'kimi', model: 'moonshotai/moonshot-v1-8k:free'}
+                {name: 'qwen', model: 'qwen/qwen-2.5-7b-instruct:free'},
+                {name: 'kimi', model: 'moonshotai/kimi-k2:free'}
             ];
 
             let modelsToQuery = currentTab === 'all' ? models : models.filter(m => m.name === currentTab);
@@ -1168,47 +1168,45 @@
                         const reader = resp.body.getReader();
                         const decoder = new TextDecoder('utf-8');
                         let buffer = '';
+                        let lastUseful = Date.now();
+
+                        const toText = (d) => {
+                            if (!d) return '';
+                            if (typeof d === 'string') return d;
+                            if (Array.isArray(d)) return d.map(toText).join('');
+                            if (typeof d === 'object') {
+                                if (typeof d.text === 'string') return d.text;
+                                if (typeof d.content === 'string') return d.content;
+                                if (Array.isArray(d.content)) return d.content.map(toText).join('');
+                            }
+                            return '';
+                        };
 
                         while (true) {
                             const { value, done } = await reader.read();
                             if (done) break;
                             buffer += decoder.decode(value, { stream: true });
-                            const parts = buffer.split('\n\n');
+                            const parts = buffer.split('\\n\\n');
                             buffer = parts.pop() || '';
                             for (const part of parts) {
-                                const line = part.trim();
-                                if (!line) continue;
-                                const dataLine = line.split('\n').find(l => l.startsWith('data:'));
+                                const lines = part.split('\\n');
+                                const dataLine = lines.find(l => l.startsWith('data:'));
                                 if (!dataLine) continue;
-                                const dataStr = dataLine.replace(/^data:\s*/, '');
-                                if (dataStr === '[DONE]') continue;
+                                const dataStr = dataLine.replace(/^data:\\s*/, '');
+                                if (!dataStr || dataStr === '[DONE]') continue;
                                 try {
                                     const json = JSON.parse(dataStr);
-                                    let delta = json.choices?.[0]?.delta?.content
-                                        || json.choices?.[0]?.delta
-                                        || json.delta
-                                        || json.content
-                                        || '';
-                                    const toText = (d) => {
-                                        if (!d) return '';
-                                        if (typeof d === 'string') return d;
-                                        if (Array.isArray(d)) return d.map(toText).join('');
-                                        if (typeof d === 'object') {
-                                            if (typeof d.text === 'string') return d.text;
-                                            if (Array.isArray(d.content)) return d.content.map(toText).join('');
-                                            if (typeof d.content === 'string') return d.content;
-                                        }
-                                        return '';
-                                    };
+                                    const choice = (json.choices && json.choices[0]) || {};
+                                    let delta = (choice.delta && (choice.delta.content ?? choice.delta)) ?? json.delta ?? json.content ?? (choice.message && choice.message.content) ?? '';
                                     let chunk = toText(delta);
-                                    if (chunk && typeof chunk === 'string') {
-                                        if (chunk.includes('[object Object]')) chunk = chunk.replace(/\[object Object\]/g, '');
-                                        accumulated += chunk;
-                                        const live = accumulated.includes('[object Object]') ? accumulated.replace(/\[object Object\]/g, '') : accumulated;
-                                        contentEl.textContent = live;
-                                        console.log('JOchat stream chunk', modelName, chunk.length);
-                                    }
-                                } catch (_) {}
+                                    if (!chunk) continue;
+                                    lastUseful = Date.now();
+                                    accumulated += chunk.replace(/\\[object Object\\]/g, '');
+                                    contentEl.textContent = accumulated;
+                                    console.log('JOchat stream chunk', modelName, chunk.length);
+                                } catch (_) {
+                                    /* tolerate parse errors */
+                                }
                             }
                         }
 
@@ -1226,7 +1224,7 @@
                         allMessages.push({
                             role: 'assistant',
                             model: modelName,
-                            content: '❌ Service temporarily unavailable.',
+                            content: `❌ ${(MODEL_LABELS[modelName] || modelName.toUpperCase())} is temporarily unavailable.`,
                             timestamp: Date.now()
                         });
                         console.log('JOchat stream error', modelName, String(err && err.message));
@@ -1300,8 +1298,8 @@
                 {name: 'gemini', model: 'google/gemini-2.5-flash-image-preview:free'},
                 {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b:free'},
                 {name: 'grok', model: 'x-ai/grok-2-mini:free'},
-                {name: 'qwen', model: 'qwen/qwen2.5-7b-instruct:free'},
-                {name: 'kimi', model: 'moonshotai/moonshot-v1-8k:free'}
+                {name: 'qwen', model: 'qwen/qwen-2.5-7b-instruct:free'},
+                {name: 'kimi', model: 'moonshotai/kimi-k2:free'}
             ];
             
             let modelsToQuery = models;
