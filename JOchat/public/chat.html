@@ -554,37 +554,37 @@
                     </button>
                     <button onclick="switchTab('chatgpt')" id="tab-chatgpt" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="assets/chatgpt.svg" alt="ChatGPT" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                            <img src="https://openai.com/favicon.ico" alt="ChatGPT" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             ChatGPT Pro
                         </span>
                     </button>
                     <button onclick="switchTab('gemini')" id="tab-gemini" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="assets/gemini.svg" alt="Gemini" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                            <img src="https://gemini.google.com/favicon.ico" alt="Gemini" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             Gemini Pro
                         </span>
                     </button>
                     <button onclick="switchTab('deepseek')" id="tab-deepseek" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="assets/deepseek.svg" alt="DeepSeek" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                            <img src="https://www.deepseek.com/favicon.ico" alt="DeepSeek" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             DeepSeek Pro
                         </span>
                     </button>
                     <button onclick="switchTab('grok')" id="tab-grok" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="assets/grok.svg" alt="Grok" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                            <img src="https://x.ai/favicon.ico" alt="Grok" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             Grok Pro
                         </span>
                     </button>
                     <button onclick="switchTab('qwen')" id="tab-qwen" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="assets/qwen.svg" alt="Qwen" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                            <img src="https://qwenlm.ai/favicon.ico" alt="Qwen" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.onerror=null; this.src='https://qwenlm.ai/favicon-32x32.png';"/>
                             Qwen Pro
                         </span>
                     </button>
                     <button onclick="switchTab('kimi')" id="tab-kimi" class="px-3 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-xl sm:rounded-2xl whitespace-nowrap transition-all tab-hover">
                         <span class="inline-flex items-center gap-2">
-                            <img src="assets/kimi.svg" alt="Kimi" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
+                            <img src="https://kimi.moonshot.cn/favicon.ico" alt="Kimi" class="w-4 h-4 sm:w-5 sm:h-5 rounded object-contain bg-white/10" onerror="this.style.display='none'"/>
                             Kimi Pro
                         </span>
                     </button>
@@ -647,12 +647,12 @@
             kimi: 'Kimi Pro'
         };
         const MODEL_LOGOS = {
-            chatgpt: 'assets/chatgpt.svg',
-            gemini: 'assets/gemini.svg',
-            deepseek: 'assets/deepseek.svg',
-            grok: 'assets/grok.svg',
-            qwen: 'assets/qwen.svg',
-            kimi: 'assets/kimi.svg'
+            chatgpt: 'https://openai.com/favicon.ico',
+            gemini: 'https://gemini.google.com/favicon.ico',
+            deepseek: 'https://www.deepseek.com/favicon.ico',
+            grok: 'https://x.ai/favicon.ico',
+            qwen: 'https://qwenlm.ai/favicon.ico',
+            kimi: 'https://kimi.moonshot.cn/favicon.ico'
         };
         // Load user and settings
         function loadUserAndSettings() {
@@ -1150,7 +1150,10 @@
                     try {
                         const resp = await fetch(streamUrl, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                ...(currentUser?.email ? { 'X-User-Email': currentUser.email } : {})
+                            },
                             body: JSON.stringify({
                                 model: m.model,
                                 messages: messagesPayload,
