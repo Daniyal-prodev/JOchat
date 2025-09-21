@@ -1048,7 +1048,7 @@
 
             const models = [
                 {name: 'chatgpt', model: 'openai/gpt-oss-20b:free'},
-                {name: 'gemini', model: 'google/gemini-2.5-flash-image-preview:free'},
+                {name: 'gemini', model: 'google/gemini-2.0-flash:free'},
                 {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b:free'},
                 {name: 'grok', model: 'x-ai/grok-2-mini:free'},
                 {name: 'qwen', model: 'qwen/qwen-2.5-7b-instruct:free'},
@@ -1190,6 +1190,17 @@
                             buffer = parts.pop() || '';
                             for (const part of parts) {
                                 const lines = part.split(/\r?\n/);
+                                const isErrorEvent = lines.some(l => l.trim() === 'event: error');
+                                if (isErrorEvent) {
+                                    const errLine = lines.find(l => l.startsWith('data:'));
+                                    const errStr = (errLine || '').replace(/^data:\s*/, '').trim();
+                                    try {
+                                        const payload = errStr ? JSON.parse(errStr) : {};
+                                        throw new Error(payload && payload.error ? payload.error : 'Stream error');
+                                    } catch {
+                                        throw new Error('Stream error');
+                                    }
+                                }
                                 const dataLine = lines.find(l => l.startsWith('data:'));
                                 if (!dataLine) continue;
                                 const dataStr = dataLine.replace(/^data:\s*/, '').trim();
@@ -1205,7 +1216,6 @@
                                     contentEl.textContent = accumulated;
                                     console.log('JOchat stream chunk', modelName, chunk.length);
                                 } catch (_) {
-                                    /* tolerate parse errors */
                                 }
                             }
                         }
@@ -1295,7 +1305,7 @@
             
             const models = [
                 {name: 'chatgpt', model: 'openai/gpt-oss-20b:free'},
-                {name: 'gemini', model: 'google/gemini-2.5-flash-image-preview:free'},
+                {name: 'gemini', model: 'google/gemini-2.0-flash:free'},
                 {name: 'deepseek', model: 'deepseek/deepseek-r1-distill-llama-70b:free'},
                 {name: 'grok', model: 'x-ai/grok-2-mini:free'},
                 {name: 'qwen', model: 'qwen/qwen-2.5-7b-instruct:free'},
