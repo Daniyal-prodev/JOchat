@@ -1186,13 +1186,13 @@
                             const { value, done } = await reader.read();
                             if (done) break;
                             buffer += decoder.decode(value, { stream: true });
-                            const parts = buffer.split('\\n\\n');
+                            const parts = buffer.split(/\\r?\\n\\r?\\n/);
                             buffer = parts.pop() || '';
                             for (const part of parts) {
-                                const lines = part.split('\\n');
+                                const lines = part.split(/\\r?\\n/);
                                 const dataLine = lines.find(l => l.startsWith('data:'));
                                 if (!dataLine) continue;
-                                const dataStr = dataLine.replace(/^data:\\s*/, '');
+                                const dataStr = dataLine.replace(/^data:\\s*/, '').trim();
                                 if (!dataStr || dataStr === '[DONE]') continue;
                                 try {
                                     const json = JSON.parse(dataStr);
