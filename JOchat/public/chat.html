@@ -1192,7 +1192,7 @@
                                 const lines = part.split(/\r?\n/);
                                 const dataLine = lines.find(l => l.startsWith('data:'));
                                 if (!dataLine) continue;
-                                const dataStr = dataLine.replace(/^data:\\s*/, '').trim();
+                                const dataStr = dataLine.replace(/^data:\s*/, '').trim();
                                 if (!dataStr || dataStr === '[DONE]') continue;
                                 try {
                                     const json = JSON.parse(dataStr);
